@@ -106,6 +106,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<meta name="mermaid-theme" content="default">
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script type="module">
   import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0/dist/mermaid-layout-elk.esm.min.mjs';
   mermaid.registerLayoutLoaders(elkLayouts);
@@ -313,7 +317,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-request-lifecycle-a-visual-map" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="the-request-lifecycle-a-visual-map"><span class="header-section-number">4.6</span> The Request Lifecycle: A Visual Map</h2>
 <p>Before we build our checkpoint project, let’s visualize exactly what happens when a request hits your FastAPI application. This flow happens for every single endpoint call, whether it’s a simple health check or a complex LLM streaming response.</p>
-<pre class="mermaid"><code>%%{init: {'theme': 'handDrawn'}}%%
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {'theme': 'handDrawn'}}%%
 flowchart LR
     A[HTTP Request&lt;br/&gt;arrives] --&gt; B{Path &amp; Query&lt;br/&gt;Parameter&lt;br/&gt;Extraction}
     B --&gt; C{Request Body&lt;br/&gt;Pydantic&lt;br/&gt;Validation}
@@ -326,54 +335,60 @@ flowchart LR
     style C fill:#fdf1b8,stroke:#000
     style D fill:#d8e2dc,stroke:#000
     style E fill:#fdf1b8,stroke:#000
-    style F fill:#e8dcc4,stroke:#000</code></pre>
+    style F fill:#e8dcc4,stroke:#000
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <p>Notice how validation acts as a safety net on both sides of your code. Before your function runs, FastAPI ensures the inputs match your Python type hints. After your function finishes, FastAPI ensures the output matches your response model. You focus on the business logic in the middle (that green box) while FastAPI handles the wire protocol.</p>
 </section>
 <section id="checkpoint-a-quote-of-the-day-api" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="checkpoint-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Checkpoint: A Quote of the Day API</h2>
 <p>Let’s wire everything together into a working mini-application. We’ll build a “Quote of the Day” service that stores quotes in memory (no database yet—just a Python dictionary) and exposes a clean REST API. This practices all the mechanics you’ll need for the LLM chat app later, but without the complexity of external API calls.</p>
 <p>Start fresh with a new file, <code>quotes_app.py</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Our "database"—just a dictionary in memory</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>quotes_db <span class="op">=</span> {}</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>next_id <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic models for type safety</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Our "database"—just a dictionary in memory</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>quotes_db <span class="op">=</span> {}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>next_id <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic models for type safety</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now add the creation endpoint. Notice we use the <code>QuoteCreate</code> model for input and the <code>Quote</code> model for output:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>, response_model<span class="op">=</span>Quote)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote_data: QuoteCreate):</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> next_id</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    new_quote <span class="op">=</span> {</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: next_id,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: quote_data.text,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: quote_data.author</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    quotes_db[next_id] <span class="op">=</span> new_quote</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    next_id <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_quote</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote_data: QuoteCreate):</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> next_id</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    new_quote <span class="op">=</span> {</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: next_id,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: quote_data.text,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: quote_data.author</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    quotes_db[next_id] <span class="op">=</span> new_quote</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    next_id <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_quote</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next, the retrieval endpoint with path parameter and error handling:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="ss">f"Quote </span><span class="sc">{</span>quote_id<span class="sc">}</span><span class="ss"> not found"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="ss">f"Quote </span><span class="sc">{</span>quote_id<span class="sc">}</span><span class="ss"> not found"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Finally, a listing endpoint with query parameters for pagination:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, skip: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>):</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    all_quotes <span class="op">=</span> <span class="bu">list</span>(quotes_db.values())</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_quotes[skip : skip <span class="op">+</span> limit]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, skip: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    all_quotes <span class="op">=</span> <span class="bu">list</span>(quotes_db.values())</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_quotes[skip : skip <span class="op">+</span> limit]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Test this in your Swagger UI (<code>/docs</code>): 1. POST to <code>/quotes</code> with <code>{"text": "Simplicity is the ultimate sophistication", "author": "Leonardo da Vinci"}</code>. Note the returned ID. 2. POST another quote to see the auto-incrementing IDs. 3. GET <code>/quotes/1</code> to retrieve your first quote by its path parameter. 4. GET <code>/quotes/1</code> with a non-existent ID to see your 404 error in action. 5. GET <code>/quotes?limit=1</code> to test the query parameter filtering.</p>
 <p>You’ve now built a complete CRUD-style API (well, CR without the Update/Delete) using pure Python data structures. The skills here—path parameters for resource IDs, request bodies for creation data, response models for guaranteed output, and HTTPException for missing resources—are exactly what we’ll use when we replace “quotes” with “chat messages” and eventually call out to an LLM for the responses.</p>
 </section>
