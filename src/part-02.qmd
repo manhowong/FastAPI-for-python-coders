@@ -1,0 +1,243 @@
+---
+title: "Building Real Endpoints"
+format:
+  html:
+    toc: true
+    code-fold: false
+---
+
+# Building Real Endpoints
+
+In the last section, you learned that a FastAPI endpoint is simply a function waiting for remote calls. But real functions don’t just sit there—they accept arguments, validate inputs, and return specific shapes of data. A function without parameters is like a coffee machine with only one button; useful, but limiting.
+
+Now we’ll give your endpoints the same flexibility your Python functions enjoy every day. You’ll learn to carve pieces out of the URL (like positional arguments), accept optional filters (like keyword arguments), and enforce strict contracts on both incoming and outgoing data using Pydantic. These are the tools that will let us later send structured prompts to an LLM and receive guaranteed JSON back.
+
+## Path Parameters: Positional Arguments in the URL
+
+When you define a Python function, positional arguments are required and ordered:
+
+```python
+def get_quote(quote_id):
+    return quotes[quote_id]
+```
+
+In FastAPI, you declare the same requirement in the URL path by wrapping the variable in curly braces. FastAPI automatically extracts that segment from the address and hands it to your function as a named argument.
+
+```python
+@app.get("/quotes/{quote_id}")
+def get_quote(quote_id: int):
+    return {"quote_id": quote_id, "message": "Here is your quote"}
+```
+
+Notice the type hint `int`? FastAPI performs automatic conversion for you. When someone visits `/quotes/42`, the string `"42"` becomes the integer `42` before your function ever sees it. If they try `/quotes/abc`, FastAPI returns a friendly **422 Unprocessable Entity** (remember that "bad data" status code?) without you writing a single line of validation logic.
+
+Think of the path parameter as the specific file drawer you want opened. It’s mandatory—it’s part of the address itself.
+
+## Query Parameters: Keyword Arguments with Defaults
+
+Sometimes you want optional modifiers, like asking for results in a specific order or limiting how many items you receive. In Python, you’d use keyword arguments with defaults:
+
+```python
+def list_quotes(limit=10, sort_by="date"):
+    ...
+```
+
+In web terms, these become **query parameters** attached to the end of the URL with a question mark: `/quotes?limit=5&sort_by=author`.
+
+Declare them in FastAPI by including them in the function signature but *not* in the path string:
+
+```python
+@app.get("/quotes")
+def list_quotes(limit: int = 10, author: str | None = None):
+    return {"limit": limit, "filter_by": author}
+```
+
+If the caller provides `?limit=20`, your function receives `20`. If they omit it, you get your default of `10`. The pipe syntax `str | None` (or `Optional[str]` in older Python) tells FastAPI this parameter is optional—like a keyword argument without a required value.
+
+Query parameters are perfect for searching, filtering, and pagination. Later, when we build our chat application, we’ll use them to let clients request message history with a specific limit.
+
+## Request Bodies: Shipping Structured Data
+
+Path and query parameters work for simple strings and numbers, but what if you need to ship a complex package? When creating a new quote (or sending a chat prompt to an LLM), you need to transmit a whole dictionary of structured information.
+
+In Python, you’d define a dataclass or a TypedDict to structure that data. FastAPI uses **Pydantic models**, which are essentially dataclasses with built-in validation and automatic documentation generation.
+
+```python
+from pydantic import BaseModel
+
+class QuoteCreate(BaseModel):
+    text: str
+    author: str
+    tags: list[str] = []
+```
+
+Now you can ask for this model as a parameter, and FastAPI knows to look for it in the HTTP request body:
+
+```python
+@app.post("/quotes")
+def create_quote(quote: QuoteCreate):
+    return {"stored": quote.text, "by": quote.author}
+```
+
+When a client sends a POST request with JSON like `{"text": "Be curious", "author": "Anonymous"}`, FastAPI validates that both required fields are present and that `text` is indeed a string. If the client forgets the `author` field, they receive a detailed 422 error pointing exactly to what’s missing—automatically, before your function runs.
+
+This is where FastAPI shines for LLM applications: later, we’ll define a `ChatRequest` model with fields like `message` and `temperature`, ensuring that every prompt sent to the AI is properly structured and validated.
+
+## Response Models: Guaranteeing Your Output Contract
+
+Just as you validate what comes in, you can guarantee what goes out. In Python, you trust that a function returns what it promises. Over a network, that trust needs enforcement because the client is often written by someone else (or by your future self, three months later).
+
+Response models act as type hints for your return values. FastAPI will validate that you’re sending exactly the shape of data you promised, filtering out any extra fields you might accidentally include.
+
+```python
+from pydantic import BaseModel
+
+class Quote(BaseModel):
+    id: int
+    text: str
+    author: str
+
+@app.get("/quotes/{quote_id}", response_model=Quote)
+def get_quote(quote_id: int):
+    # Even if this dictionary had extra keys like "internal_note",
+    # FastAPI would strip them and return only id, text, and author
+    return {
+        "id": quote_id,
+        "text": "The journey of a thousand miles...",
+        "author": "Lao Tzu"
+    }
+```
+
+The `response_model` parameter tells FastAPI: "No matter what happens inside this function, the outside world only sees this structure." This creates a reliable contract for frontend developers and makes your API documentation in Swagger UI instantly trustworthy.
+
+## Handling Errors Gracefully with HTTPException
+
+In a normal Python script, when something goes wrong, you raise an exception and the program crashes or catches it. In a web API, you can’t crash—you must send a polite letter explaining the problem so the client can react appropriately.
+
+FastAPI provides `HTTPException` to convert Python errors into proper HTTP status codes. Think of it as raising a `KeyError` or `ValueError`, but with a number attached so the caller knows what went wrong.
+
+```python
+from fastapi import HTTPException
+
+@app.get("/quotes/{quote_id}")
+def get_quote(quote_id: int):
+    if quote_id not in quotes_db:
+        raise HTTPException(status_code=404, detail="Quote not found")
+    return quotes_db[quote_id]
+```
+
+Now, instead of a mysterious server crash (status 500), the client receives a clean **404 Not Found** with the message "Quote not found." This maps perfectly to your Python intuition: looking up a missing dictionary key raises `KeyError`; looking up a missing resource returns HTTP 404.
+
+You can use different codes for different situations:
+- **400** for "you sent bad data" (like a `ValueError`)
+- **401/403** for authentication issues (like a permission error)
+- **422** for validation failures (handled automatically by Pydantic)
+
+## The Request Lifecycle: A Visual Map
+
+Before we build our checkpoint project, let’s visualize exactly what happens when a request hits your FastAPI application. This flow happens for every single endpoint call, whether it’s a simple health check or a complex LLM streaming response.
+
+```mermaid
+%%{init: {'theme': 'handDrawn'}}%%
+flowchart LR
+    A[HTTP Request<br/>arrives] --> B{Path & Query<br/>Parameter<br/>Extraction}
+    B --> C{Request Body<br/>Pydantic<br/>Validation}
+    C --> D[Your Route<br/>Function<br/>Executes]
+    D --> E{Response Model<br/>Validation &<br/>Serialization}
+    E --> F[JSON Response<br/>sent to Client]
+    
+    style A fill:#e8dcc4,stroke:#000
+    style B fill:#fdf1b8,stroke:#000
+    style C fill:#fdf1b8,stroke:#000
+    style D fill:#d8e2dc,stroke:#000
+    style E fill:#fdf1b8,stroke:#000
+    style F fill:#e8dcc4,stroke:#000
+```
+
+Notice how validation acts as a safety net on both sides of your code. Before your function runs, FastAPI ensures the inputs match your Python type hints. After your function finishes, FastAPI ensures the output matches your response model. You focus on the business logic in the middle (that green box) while FastAPI handles the wire protocol.
+
+## Checkpoint: A Quote of the Day API
+
+Let’s wire everything together into a working mini-application. We’ll build a "Quote of the Day" service that stores quotes in memory (no database yet—just a Python dictionary) and exposes a clean REST API. This practices all the mechanics you’ll need for the LLM chat app later, but without the complexity of external API calls.
+
+Start fresh with a new file, `quotes_app.py`:
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Our "database"—just a dictionary in memory
+quotes_db = {}
+next_id = 1
+
+# Pydantic models for type safety
+class QuoteCreate(BaseModel):
+    text: str
+    author: str
+
+class Quote(BaseModel):
+    id: int
+    text: str
+    author: str
+```
+
+Now add the creation endpoint. Notice we use the `QuoteCreate` model for input and the `Quote` model for output:
+
+```python
+@app.post("/quotes", response_model=Quote)
+def create_quote(quote_data: QuoteCreate):
+    global next_id
+    new_quote = {
+        "id": next_id,
+        "text": quote_data.text,
+        "author": quote_data.author
+    }
+    quotes_db[next_id] = new_quote
+    next_id += 1
+    return new_quote
+```
+
+Next, the retrieval endpoint with path parameter and error handling:
+
+```python
+@app.get("/quotes/{quote_id}", response_model=Quote)
+def get_quote(quote_id: int):
+    if quote_id not in quotes_db:
+        raise HTTPException(status_code=404, detail=f"Quote {quote_id} not found")
+    return quotes_db[quote_id]
+```
+
+Finally, a listing endpoint with query parameters for pagination:
+
+```python
+@app.get("/quotes")
+def list_quotes(limit: int = 10, skip: int = 0):
+    all_quotes = list(quotes_db.values())
+    return all_quotes[skip : skip + limit]
+```
+
+Test this in your Swagger UI (`/docs`):
+1. POST to `/quotes` with `{"text": "Simplicity is the ultimate sophistication", "author": "Leonardo da Vinci"}`. Note the returned ID.
+2. POST another quote to see the auto-incrementing IDs.
+3. GET `/quotes/1` to retrieve your first quote by its path parameter.
+4. GET `/quotes/1` with a non-existent ID to see your 404 error in action.
+5. GET `/quotes?limit=1` to test the query parameter filtering.
+
+You’ve now built a complete CRUD-style API (well, CR without the Update/Delete) using pure Python data structures. The skills here—path parameters for resource IDs, request bodies for creation data, response models for guaranteed output, and HTTPException for missing resources—are exactly what we’ll use when we replace "quotes" with "chat messages" and eventually call out to an LLM for the responses.
+
+## Part Recap: Terms You Learned
+
+Here’s the vocabulary you’ve added to your mental dictionary, mapping web concepts to Python patterns you already know:
+
+| Web Term | What it actually means in Python |
+|----------|----------------------------------|
+| **Path Parameter** | A positional argument extracted from the URL path, like `/items/{item_id}` mapping to `def get_item(item_id)` |
+| **Query Parameter** | A keyword argument with a default value, extracted from the URL query string like `?limit=10` |
+| **Request Body** | A Pydantic model (like a dataclass) shipped as JSON in the POST request, automatically validated |
+| **Response Model** | The output type hint that guarantees the shape of your returned JSON, filtering extra fields |
+| **HTTPException** | The bridge between Python exceptions and HTTP status codes; raise it to send 404, 400, etc. |
+| **Validation** | The automatic checking that incoming data matches your Pydantic types, returning 422 if it fails |
+
+In the next section, we’ll tackle the async mindset. You’ll learn why calling a slow LLM API without `async` would freeze up your entire server, and how dependency injection keeps your code clean when managing external clients. These concepts will transform your Quote API into a responsive, production-ready chat service.

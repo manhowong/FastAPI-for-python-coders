@@ -1,0 +1,20 @@
+﻿project:
+  type: book
+  output-dir: ../_book
+
+book:
+  title: "FastAPI for Python Coders"
+  author: "Man Ho Wong"
+  chapters:
+    - index.qmd
+    - part-01.qmd
+    - part-02.qmd
+    - part-03.qmd
+    - part-04.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-copy: true
