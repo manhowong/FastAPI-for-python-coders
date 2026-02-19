@@ -4,6 +4,7 @@
 
 book:
   title: "FastAPI for Python Coders"
+  favicon: "images/book.png"
   author: "Man Ho Wong"
   chapters:
     - index.qmd
@@ -12,9 +13,44 @@ book:
     - part-03.qmd
     - part-04.qmd
 
+  sidebar:
+    logo: "images/book.png"
+    collapse-level: 1  # All sections will be closed by default
+    style: docked       # This is the key setting
+    background: light   # Optional: set a light or dark background
+    toggle: true
+
+  page-footer: 
+    border: true
+    center: |
+        [Back to Top <i class="bi bi-arrow-up"></i>](#)
+        <br> 
 format:
   html:
-    theme: cosmo
-    toc: true
-    toc-depth: 3
+    theme: 
+      - cosmo
+      - custom.scss
+    df-print: paged 
+    code-copy: true         # Adds a copy button to code blocks
+    toc: true               # generates "On this page" TOC (right sidebar)
+    toc-title: "On this page"
     code-copy: true
+  
+    number-sections: true # numbers headings
+    number-depth: 3  # how deep the numbering goes (e.g., 1.1.1)
+
+    mermaid:
+      theme: default
+    include-in-header:
+      text: |  # Add mermaid module for elk layout
+        <script type="module">
+          import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0/dist/mermaid-layout-elk.esm.min.mjs';
+          mermaid.registerLayoutLoaders(elkLayouts);
+        </script>
+
+    grid:
+      sidebar-width: 300px  # default width is 250px
+
+date-format: long
+license: CC BY-NC-SA
+

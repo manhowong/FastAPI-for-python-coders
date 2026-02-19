@@ -1,0 +1,82 @@
+/*-- scss:defaults --*/
+$body-bg: #fff5ec;      // Main book background color
+$sidebar-bg: #ffffff;   // Sidebar background color
+$sidebar-fg: #242424;   // Sidebar text color
+
+/* search box container */
+.aa-Form {
+  background-color: $sidebar-bg !important;
+  border: 1px solid $sidebar-fg;
+}
+
+/* input text area of search box */
+.aa-Input {
+  background-color: transparent !important;
+}
+
+/* Hide breadcrumbs */
+.navbar-breadcrumbs,
+.quarto-breadcrumb,
+.quarto-breadcrumbs,
+.breadcrumb-item,
+.quarto-navigation-tool .breadcrumb {
+  display: none !important;
+}
+
+/* Force all display math to be scrollable and respect page width */
+mjx-container[display="true"] {
+  display: block !important;    /* Required for overflow to work */
+  overflow-x: auto !important;  /* Adds the scroll bar */
+  overflow-y: hidden !important;
+  max-width: 100% !important;   /* Limits to page width */
+  padding: 0.5em 0;             /* Prevents clipping of tall symbols */
+}
+
+/* Fallback for older MathJax versions or specific themes */
+.math.display {
+  display: block !important;
+  overflow-x: auto !important;
+  max-width: 100% !important;
+}
+
+
+/* Force tables and their parent containers to stay within the viewport */
+.quarto-secondary-nav, .content, main, .table-responsive {
+  max-width: 100vw;
+  overflow-x: auto;
+}
+
+table, .table {
+  display: table;        /* Reverts 'block' display if it interfered with sizing */
+  background-color: #ffffff;
+}
+
+/* Fallback: ensure the direct table wrapper forces the scrollbar */
+div.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Force sidebar links and text to wrap */
+.sidebar-item,
+.sidebar-link,
+.sidebar-item-text,
+.sidebar-link.text-start {
+  white-space: normal !important; /* Overrides 'nowrap' */
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  display: flex !important;      /* Ensures flexbox container doesn't block wrap */
+  flex-wrap: wrap !important;
+}
+
+/* Adjust the link text inside to allow it to take up available space */
+.sidebar-link > span {
+  white-space: normal !important;
+}
+
+/* Hide the original chapter titles in the footer navigation */
+.nav-page-text {
+  visibility: hidden;
+}
