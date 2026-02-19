@@ -34,7 +34,6 @@ format:
     code-copy: true         # Adds a copy button to code blocks
     toc: true               # generates "On this page" TOC (right sidebar)
     toc-title: "On this page"
-    code-copy: true
   
     number-sections: true # numbers headings
     number-depth: 3  # how deep the numbering goes (e.g., 1.1.1)
