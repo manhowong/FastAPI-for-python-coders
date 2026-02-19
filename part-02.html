@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Building Real Endpoints – FastAPI for Python Coders</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./part-03.html" rel="next">
+<link href="./part-01.html" rel="prev">
+<link href="./images/book.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a496c526c144800fb99e94ce0b766f38.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module">
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0/dist/mermaid-layout-elk.esm.min.mjs';
+  mermaid.registerLayoutLoaders(elkLayouts);
+</script>
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-02.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/book.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="./images/book.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">FastAPI for Python Coders</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">FastAPI for Python Coders</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part-01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part-02.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part-03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./part-04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Building the LLM Chat Application</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#building-real-endpoints" id="toc-building-real-endpoints" class="nav-link active" data-scroll-target="#building-real-endpoints"><span class="header-section-number">4</span> Building Real Endpoints</a>
+  <ul class="collapse">
+  <li><a href="#path-parameters-positional-arguments-in-the-url" id="toc-path-parameters-positional-arguments-in-the-url" class="nav-link" data-scroll-target="#path-parameters-positional-arguments-in-the-url"><span class="header-section-number">4.1</span> Path Parameters: Positional Arguments in the URL</a></li>
+  <li><a href="#query-parameters-keyword-arguments-with-defaults" id="toc-query-parameters-keyword-arguments-with-defaults" class="nav-link" data-scroll-target="#query-parameters-keyword-arguments-with-defaults"><span class="header-section-number">4.2</span> Query Parameters: Keyword Arguments with Defaults</a></li>
+  <li><a href="#request-bodies-shipping-structured-data" id="toc-request-bodies-shipping-structured-data" class="nav-link" data-scroll-target="#request-bodies-shipping-structured-data"><span class="header-section-number">4.3</span> Request Bodies: Shipping Structured Data</a></li>
+  <li><a href="#response-models-guaranteeing-your-output-contract" id="toc-response-models-guaranteeing-your-output-contract" class="nav-link" data-scroll-target="#response-models-guaranteeing-your-output-contract"><span class="header-section-number">4.4</span> Response Models: Guaranteeing Your Output Contract</a></li>
+  <li><a href="#handling-errors-gracefully-with-httpexception" id="toc-handling-errors-gracefully-with-httpexception" class="nav-link" data-scroll-target="#handling-errors-gracefully-with-httpexception"><span class="header-section-number">4.5</span> Handling Errors Gracefully with HTTPException</a></li>
+  <li><a href="#the-request-lifecycle-a-visual-map" id="toc-the-request-lifecycle-a-visual-map" class="nav-link" data-scroll-target="#the-request-lifecycle-a-visual-map"><span class="header-section-number">4.6</span> The Request Lifecycle: A Visual Map</a></li>
+  <li><a href="#checkpoint-a-quote-of-the-day-api" id="toc-checkpoint-a-quote-of-the-day-api" class="nav-link" data-scroll-target="#checkpoint-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Checkpoint: A Quote of the Day API</a></li>
+  <li><a href="#part-recap-terms-you-learned" id="toc-part-recap-terms-you-learned" class="nav-link" data-scroll-target="#part-recap-terms-you-learned"><span class="header-section-number">4.8</span> Part Recap: Terms You Learned</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="building-real-endpoints" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Building Real Endpoints</h1>
+<p>In the last section, you learned that a FastAPI endpoint is simply a function waiting for remote calls. But real functions don’t just sit there—they accept arguments, validate inputs, and return specific shapes of data. A function without parameters is like a coffee machine with only one button; useful, but limiting.</p>
+<p>Now we’ll give your endpoints the same flexibility your Python functions enjoy every day. You’ll learn to carve pieces out of the URL (like positional arguments), accept optional filters (like keyword arguments), and enforce strict contracts on both incoming and outgoing data using Pydantic. These are the tools that will let us later send structured prompts to an LLM and receive guaranteed JSON back.</p>
+<section id="path-parameters-positional-arguments-in-the-url" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="path-parameters-positional-arguments-in-the-url"><span class="header-section-number">4.1</span> Path Parameters: Positional Arguments in the URL</h2>
+<p>When you define a Python function, positional arguments are required and ordered:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In FastAPI, you declare the same requirement in the URL path by wrapping the variable in curly braces. FastAPI automatically extracts that segment from the address and hands it to your function as a named argument.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"quote_id"</span>: quote_id, <span class="st">"message"</span>: <span class="st">"Here is your quote"</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Notice the type hint <code>int</code>? FastAPI performs automatic conversion for you. When someone visits <code>/quotes/42</code>, the string <code>"42"</code> becomes the integer <code>42</code> before your function ever sees it. If they try <code>/quotes/abc</code>, FastAPI returns a friendly <strong>422 Unprocessable Entity</strong> (remember that “bad data” status code?) without you writing a single line of validation logic.</p>
+<p>Think of the path parameter as the specific file drawer you want opened. It’s mandatory—it’s part of the address itself.</p>
+</section>
+<section id="query-parameters-keyword-arguments-with-defaults" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="query-parameters-keyword-arguments-with-defaults"><span class="header-section-number">4.2</span> Query Parameters: Keyword Arguments with Defaults</h2>
+<p>Sometimes you want optional modifiers, like asking for results in a specific order or limiting how many items you receive. In Python, you’d use keyword arguments with defaults:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit<span class="op">=</span><span class="dv">10</span>, sort_by<span class="op">=</span><span class="st">"date"</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In web terms, these become <strong>query parameters</strong> attached to the end of the URL with a question mark: <code>/quotes?limit=5&amp;sort_by=author</code>.</p>
+<p>Declare them in FastAPI by including them in the function signature but <em>not</em> in the path string:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, author: <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"limit"</span>: limit, <span class="st">"filter_by"</span>: author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If the caller provides <code>?limit=20</code>, your function receives <code>20</code>. If they omit it, you get your default of <code>10</code>. The pipe syntax <code>str | None</code> (or <code>Optional[str]</code> in older Python) tells FastAPI this parameter is optional—like a keyword argument without a required value.</p>
+<p>Query parameters are perfect for searching, filtering, and pagination. Later, when we build our chat application, we’ll use them to let clients request message history with a specific limit.</p>
+</section>
+<section id="request-bodies-shipping-structured-data" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="request-bodies-shipping-structured-data"><span class="header-section-number">4.3</span> Request Bodies: Shipping Structured Data</h2>
+<p>Path and query parameters work for simple strings and numbers, but what if you need to ship a complex package? When creating a new quote (or sending a chat prompt to an LLM), you need to transmit a whole dictionary of structured information.</p>
+<p>In Python, you’d define a dataclass or a TypedDict to structure that data. FastAPI uses <strong>Pydantic models</strong>, which are essentially dataclasses with built-in validation and automatic documentation generation.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    tags: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> []</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now you can ask for this model as a parameter, and FastAPI knows to look for it in the HTTP request body:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote: QuoteCreate):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"stored"</span>: quote.text, <span class="st">"by"</span>: quote.author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>When a client sends a POST request with JSON like <code>{"text": "Be curious", "author": "Anonymous"}</code>, FastAPI validates that both required fields are present and that <code>text</code> is indeed a string. If the client forgets the <code>author</code> field, they receive a detailed 422 error pointing exactly to what’s missing—automatically, before your function runs.</p>
+<p>This is where FastAPI shines for LLM applications: later, we’ll define a <code>ChatRequest</code> model with fields like <code>message</code> and <code>temperature</code>, ensuring that every prompt sent to the AI is properly structured and validated.</p>
+</section>
+<section id="response-models-guaranteeing-your-output-contract" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="response-models-guaranteeing-your-output-contract"><span class="header-section-number">4.4</span> Response Models: Guaranteeing Your Output Contract</h2>
+<p>Just as you validate what comes in, you can guarantee what goes out. In Python, you trust that a function returns what it promises. Over a network, that trust needs enforcement because the client is often written by someone else (or by your future self, three months later).</p>
+<p>Response models act as type hints for your return values. FastAPI will validate that you’re sending exactly the shape of data you promised, filtering out any extra fields you might accidentally include.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Even if this dictionary had extra keys like "internal_note",</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FastAPI would strip them and return only id, text, and author</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: quote_id,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: <span class="st">"The journey of a thousand miles..."</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: <span class="st">"Lao Tzu"</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>response_model</code> parameter tells FastAPI: “No matter what happens inside this function, the outside world only sees this structure.” This creates a reliable contract for frontend developers and makes your API documentation in Swagger UI instantly trustworthy.</p>
+</section>
+<section id="handling-errors-gracefully-with-httpexception" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="handling-errors-gracefully-with-httpexception"><span class="header-section-number">4.5</span> Handling Errors Gracefully with HTTPException</h2>
+<p>In a normal Python script, when something goes wrong, you raise an exception and the program crashes or catches it. In a web API, you can’t crash—you must send a polite letter explaining the problem so the client can react appropriately.</p>
+<p>FastAPI provides <code>HTTPException</code> to convert Python errors into proper HTTP status codes. Think of it as raising a <code>KeyError</code> or <code>ValueError</code>, but with a number attached so the caller knows what went wrong.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> HTTPException</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="st">"Quote not found"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now, instead of a mysterious server crash (status 500), the client receives a clean <strong>404 Not Found</strong> with the message “Quote not found.” This maps perfectly to your Python intuition: looking up a missing dictionary key raises <code>KeyError</code>; looking up a missing resource returns HTTP 404.</p>
+<p>You can use different codes for different situations: - <strong>400</strong> for “you sent bad data” (like a <code>ValueError</code>) - <strong>401/403</strong> for authentication issues (like a permission error) - <strong>422</strong> for validation failures (handled automatically by Pydantic)</p>
+</section>
+<section id="the-request-lifecycle-a-visual-map" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="the-request-lifecycle-a-visual-map"><span class="header-section-number">4.6</span> The Request Lifecycle: A Visual Map</h2>
+<p>Before we build our checkpoint project, let’s visualize exactly what happens when a request hits your FastAPI application. This flow happens for every single endpoint call, whether it’s a simple health check or a complex LLM streaming response.</p>
+<pre class="mermaid"><code>%%{init: {'theme': 'handDrawn'}}%%
+flowchart LR
+    A[HTTP Request&lt;br/&gt;arrives] --&gt; B{Path &amp; Query&lt;br/&gt;Parameter&lt;br/&gt;Extraction}
+    B --&gt; C{Request Body&lt;br/&gt;Pydantic&lt;br/&gt;Validation}
+    C --&gt; D[Your Route&lt;br/&gt;Function&lt;br/&gt;Executes]
+    D --&gt; E{Response Model&lt;br/&gt;Validation &amp;&lt;br/&gt;Serialization}
+    E --&gt; F[JSON Response&lt;br/&gt;sent to Client]
+    
+    style A fill:#e8dcc4,stroke:#000
+    style B fill:#fdf1b8,stroke:#000
+    style C fill:#fdf1b8,stroke:#000
+    style D fill:#d8e2dc,stroke:#000
+    style E fill:#fdf1b8,stroke:#000
+    style F fill:#e8dcc4,stroke:#000</code></pre>
+<p>Notice how validation acts as a safety net on both sides of your code. Before your function runs, FastAPI ensures the inputs match your Python type hints. After your function finishes, FastAPI ensures the output matches your response model. You focus on the business logic in the middle (that green box) while FastAPI handles the wire protocol.</p>
+</section>
+<section id="checkpoint-a-quote-of-the-day-api" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="checkpoint-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Checkpoint: A Quote of the Day API</h2>
+<p>Let’s wire everything together into a working mini-application. We’ll build a “Quote of the Day” service that stores quotes in memory (no database yet—just a Python dictionary) and exposes a clean REST API. This practices all the mechanics you’ll need for the LLM chat app later, but without the complexity of external API calls.</p>
+<p>Start fresh with a new file, <code>quotes_app.py</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Our "database"—just a dictionary in memory</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>quotes_db <span class="op">=</span> {}</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>next_id <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic models for type safety</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now add the creation endpoint. Notice we use the <code>QuoteCreate</code> model for input and the <code>Quote</code> model for output:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote_data: QuoteCreate):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> next_id</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    new_quote <span class="op">=</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: next_id,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: quote_data.text,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: quote_data.author</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    quotes_db[next_id] <span class="op">=</span> new_quote</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    next_id <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_quote</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Next, the retrieval endpoint with path parameter and error handling:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="ss">f"Quote </span><span class="sc">{</span>quote_id<span class="sc">}</span><span class="ss"> not found"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Finally, a listing endpoint with query parameters for pagination:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, skip: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>):</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    all_quotes <span class="op">=</span> <span class="bu">list</span>(quotes_db.values())</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_quotes[skip : skip <span class="op">+</span> limit]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Test this in your Swagger UI (<code>/docs</code>): 1. POST to <code>/quotes</code> with <code>{"text": "Simplicity is the ultimate sophistication", "author": "Leonardo da Vinci"}</code>. Note the returned ID. 2. POST another quote to see the auto-incrementing IDs. 3. GET <code>/quotes/1</code> to retrieve your first quote by its path parameter. 4. GET <code>/quotes/1</code> with a non-existent ID to see your 404 error in action. 5. GET <code>/quotes?limit=1</code> to test the query parameter filtering.</p>
+<p>You’ve now built a complete CRUD-style API (well, CR without the Update/Delete) using pure Python data structures. The skills here—path parameters for resource IDs, request bodies for creation data, response models for guaranteed output, and HTTPException for missing resources—are exactly what we’ll use when we replace “quotes” with “chat messages” and eventually call out to an LLM for the responses.</p>
+</section>
+<section id="part-recap-terms-you-learned" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="part-recap-terms-you-learned"><span class="header-section-number">4.8</span> Part Recap: Terms You Learned</h2>
+<p>Here’s the vocabulary you’ve added to your mental dictionary, mapping web concepts to Python patterns you already know:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 77%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Web Term</th>
+<th>What it actually means in Python</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Path Parameter</strong></td>
+<td>A positional argument extracted from the URL path, like <code>/items/{item_id}</code> mapping to <code>def get_item(item_id)</code></td>
+</tr>
+<tr class="even">
+<td><strong>Query Parameter</strong></td>
+<td>A keyword argument with a default value, extracted from the URL query string like <code>?limit=10</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Request Body</strong></td>
+<td>A Pydantic model (like a dataclass) shipped as JSON in the POST request, automatically validated</td>
+</tr>
+<tr class="even">
+<td><strong>Response Model</strong></td>
+<td>The output type hint that guarantees the shape of your returned JSON, filtering extra fields</td>
+</tr>
+<tr class="odd">
+<td><strong>HTTPException</strong></td>
+<td>The bridge between Python exceptions and HTTP status codes; raise it to send 404, 400, etc.</td>
+</tr>
+<tr class="even">
+<td><strong>Validation</strong></td>
+<td>The automatic checking that incoming data matches your Pydantic types, returning 422 if it fails</td>
+</tr>
+</tbody>
+</table>
+<p>In the next section, we’ll tackle the async mindset. You’ll learn why calling a slow LLM API without <code>async</code> would freeze up your entire server, and how dependency injection keeps your code clean when managing external clients. These concepts will transform your Quote API into a responsive, production-ready chat service.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./part-01.html" class="pagination-link" aria-label="The Web as Remote Function Calls">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./part-03.html" class="pagination-link" aria-label="The Async Mindset and Dependency Injection">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p><a href="#">Back to Top <i class="bi bi-arrow-up"></i></a> <br></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

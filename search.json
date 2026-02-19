@@ -1,0 +1,312 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "FastAPI for Python Coders",
+    "section": "",
+    "text": "1 FastAPI for Python Coders\nA friendly FastAPI tutorial for Python coders with zero web background.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>FastAPI for Python Coders</span>"
+    ]
+  },
+  {
+    "objectID": "part-01.html",
+    "href": "part-01.html",
+    "title": "2  The Web as Remote Function Calls",
+    "section": "",
+    "text": "3 The Web as Remote Function Calls\nIf you’ve ever written a Python script that calls a function, processes data, and prints results, you already know more than you think. Building a web API is essentially the same workflow, except the function call travels over the internet to reach someone else’s computer (or your own, running as a server simultaneously).\nWe’ll anchor this journey by building toward a practical LLM-powered chat application—something that actually streams responses from an AI like a real product. But every skill you learn here applies equally to building inventory systems, data dashboards, or mobile app backends.\nLet’s start by rewiring how you think about calling functions.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Web as Remote Function Calls</span>"
+    ]
+  },
+  {
+    "objectID": "part-01.html#what-if-you-could-call-a-function-on-someone-elses-computer",
+    "href": "part-01.html#what-if-you-could-call-a-function-on-someone-elses-computer",
+    "title": "2  The Web as Remote Function Calls",
+    "section": "3.1 What If You Could Call a Function on Someone Else’s Computer?",
+    "text": "3.1 What If You Could Call a Function on Someone Else’s Computer?\nPicture yourself at your desk, running Python in a notebook or script. When you write:\nuser = get_user(user_id=123)\nPython jumps straight into get_user, grabs the data, and hands it back to you instantly. Everything happens in one place: your computer.\nNow imagine you want your friend’s computer (or a server in the cloud) to run that get_user lookup for you. You can’t just type the function name and expect their machine to hear you. You need a agreed-upon protocol for asking, and a format for the answer.\nThat protocol is HTTP, and that request-and-answer dance is the heartbeat of every FastAPI application.\nThink of it like this: instead of calling a function directly, you’re sending a polite letter asking another computer to run a function for you. That letter includes: - The address (the URL, like /users/123) - The action (GET me the data, or POST this new data) - Any arguments (packed neatly as JSON, the internet’s version of a Python dictionary)\nWhen the other computer finishes, it sends a letter back containing your result—or a note explaining why it couldn’t help (we’ll call that note a status code).\n\n\n\n\n\n%%{init: {'theme': 'handDrawn'}}%%\nsequenceDiagram\n    participant C as Your Script (Client)\n    participant S as FastAPI Server\n    C-&gt;&gt;S: HTTP Request: GET /users/123\n    Note over S: Server runs get_user(123)\n    S-&gt;&gt;C: HTTP Response: {\"name\": \"Alice\"}",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Web as Remote Function Calls</span>"
+    ]
+  },
+  {
+    "objectID": "part-01.html#the-http-vocab",
+    "href": "part-01.html#the-http-vocab",
+    "title": "2  The Web as Remote Function Calls",
+    "section": "3.2 The HTTP Vocab",
+    "text": "3.2 The HTTP Vocab\nGET and POST are the two actions you’ll use most. Think of GET as reading or fetching—like opening a file or querying a dictionary. Use GET when you want data but aren’t changing anything on the server. POST is for actions or creating things—like appending to a list, processing a payment, or later on, sending a prompt to an LLM. If GET is “fetch the menu,” POST is “place the order.”\nStatus codes are the server’s way of communicating what happened. You can map them directly to Python experiences you already have: - 200 means “Success!” (like a function returning normally) - 404 means “Not Found” (like a KeyError when you look up a missing dictionary key) - 422 means “You sent me bad data” (like a ValueError when you pass a string to an integer parameter)\nJSON is simply the wire format that lets Python dictionaries travel between computers. When you return {\"message\": \"hello\"} from FastAPI, it automatically becomes JSON bytes over the wire, and the client’s Python code receives it as {\"message\": \"hello\"} again. No manual translation required.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Web as Remote Function Calls</span>"
+    ]
+  },
+  {
+    "objectID": "part-01.html#fastapi-app-in-5-minutes",
+    "href": "part-01.html#fastapi-app-in-5-minutes",
+    "title": "2  The Web as Remote Function Calls",
+    "section": "3.3 FastAPI App in 5 Minutes",
+    "text": "3.3 FastAPI App in 5 Minutes\nWe’ll create the smallest possible web application—just enough to see that “remote function call” in action.\n\n3.3.1 Setting Up\nYou’ll need two Python packages: fastapi for the framework, and uvicorn for the server engine that actually listens for network letters and hands them to your code. Think of Uvicorn as the friendly receptionist who answers the phone and routes calls to your FastAPI app.\npip install fastapi uvicorn[standard]\nCreate a file named main.py and add exactly this:\nfrom fastapi import FastAPI\n\n# This creates your app instance—think of it as the switchboard\napp = FastAPI()\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"Hello, web world!\"}\nThat @app.get(\"/\") line is doing something powerful: it’s mapping the URL address / to your Python function read_root. When someone (a browser, a script, or later your React frontend) sends a GET request to that address, FastAPI runs your function and ships back the dictionary as JSON.\n\n\n3.3.2 Running the Development Server\nNow for the magic moment. In your terminal, run:\nuvicorn main:app --reload\nThe --reload flag means “watch my code and restart if I make changes”—perfect for learning.\nYou should see a message telling you the server is running at http://127.0.0.1:8000. Open your browser and visit that address, or use curl:\ncurl http://localhost:8000/\nYou’ll receive {\"message\":\"Hello, web world!\"}. Congratulations—you just made a remote function call! Your browser sent an HTTP GET request to /, FastAPI executed read_root(), and the return value flew back as JSON.\n\n\n3.3.3 Interactive Documentation\nHere’s where FastAPI spoils you. While your server is running, visit http://localhost:8000/docs in your browser. You’ll see a beautiful, interactive dashboard called Swagger UI.\nThis page is auto-generated from your Python code. It lists every endpoint you’ve defined (right now, just our root path), shows exactly what JSON structure it expects and returns, and even lets you click “Try it out” to fire test requests without leaving the browser.\nThis isn’t just documentation—it’s a contract. Because you used Python type hints (even implicitly, by returning a dict), FastAPI generated a schema that frontend developers can rely on. No extra work required.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Web as Remote Function Calls</span>"
+    ]
+  },
+  {
+    "objectID": "part-01.html#hands-on-make-the-web-server-talk-back",
+    "href": "part-01.html#hands-on-make-the-web-server-talk-back",
+    "title": "2  The Web as Remote Function Calls",
+    "section": "3.4 Hands-On: Make the Web Server Talk Back",
+    "text": "3.4 Hands-On: Make the Web Server Talk Back\nLet’s cement this with two tiny endpoints you’ll actually use in real projects—especially that LLM app we’re building toward.\nFirst, a health check. Every production service needs a simple “are you awake?” endpoint that monitoring tools can ping. Add this to your main.py:\n@app.get(\"/health\")\ndef health_check():\n    return {\"status\": \"ok\"}\nSave the file (Uvicorn will reload automatically), then visit http://localhost:8000/health. You should see your status dictionary.\nSecond, an echo endpoint that accepts data. This teaches you POST and proves that data flows both ways. Add this below your health check:\nfrom pydantic import BaseModel\n\nclass Message(BaseModel):\n    text: str\n    sender: str\n\n@app.post(\"/echo\")\ndef echo_message(message: Message):\n    return {\n        \"received\": message.text,\n        \"from\": message.sender,\n        \"response\": f\"Echo: {message.text}\"\n    }\nNotice BaseModel? It’s just a way to declare “this endpoint expects JSON with a text string and a sender string.” FastAPI will automatically validate the incoming JSON—if someone sends malformed data, they’ll get a helpful 422 error (remember that “bad data” code?) before your function even runs.\nTest it in your Swagger UI at /docs: 1. Click the /echo endpoint, then “Try it out” 2. Paste this JSON into the request body: json    {      \"text\": \"Hello from the internet\",      \"sender\": \"Student\"    } 3. Click Execute\nYou should see your echoed response. You’ve just built an API that accepts structured input and returns structured output—the exact pattern we’ll use later to send prompts to an LLM.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Web as Remote Function Calls</span>"
+    ]
+  },
+  {
+    "objectID": "part-01.html#recap-terms-you-learned",
+    "href": "part-01.html#recap-terms-you-learned",
+    "title": "2  The Web as Remote Function Calls",
+    "section": "3.5 Recap: Terms You Learned",
+    "text": "3.5 Recap: Terms You Learned\nBefore we move on to building endpoints with real parameters, let’s consolidate the vocabulary you’ve earned. Here’s how web concepts map to your Python intuition:\n\n\n\n\n\n\n\nWeb Term\nWhat it actually means in Python\n\n\n\n\nEndpoint\nThe specific URL address that triggers your function—like a named entry point for remote calls\n\n\nRequest\nThe “letter” sent by the client containing the HTTP method, headers, and JSON body (arguments)\n\n\nResponse\nThe dictionary (or data) your function returns, wrapped with a status code (the exit code of the operation)\n\n\nGET\nThe “read-only” method for fetching data—safe, like accessing a dictionary key\n\n\nPOST\nThe “action” method for sending data to be processed—like calling a function that appends to a list\n\n\nJSON\nThe wire format that lets Python dictionaries travel between computers; think of it as pickle but human-readable and universal\n\n\nStatus Code\nThe numeric result of the operation: 200 for success, 404 for “not found,” 422 for “bad arguments”\n\n\n\nIn the next section, we’ll expand this foundation. You’ll learn to capture pieces of the URL as function arguments (path parameters), accept query strings (like keyword arguments), and use Pydantic to enforce data contracts—skills that will let us wire up that LLM chat interface with clean, reliable code.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Web as Remote Function Calls</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html",
+    "href": "part-02.html",
+    "title": "3  Building Real Endpoints",
+    "section": "",
+    "text": "4 Building Real Endpoints\nIn the last section, you learned that a FastAPI endpoint is simply a function waiting for remote calls. But real functions don’t just sit there—they accept arguments, validate inputs, and return specific shapes of data. A function without parameters is like a coffee machine with only one button; useful, but limiting.\nNow we’ll give your endpoints the same flexibility your Python functions enjoy every day. You’ll learn to carve pieces out of the URL (like positional arguments), accept optional filters (like keyword arguments), and enforce strict contracts on both incoming and outgoing data using Pydantic. These are the tools that will let us later send structured prompts to an LLM and receive guaranteed JSON back.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#path-parameters-positional-arguments-in-the-url",
+    "href": "part-02.html#path-parameters-positional-arguments-in-the-url",
+    "title": "3  Building Real Endpoints",
+    "section": "4.1 Path Parameters: Positional Arguments in the URL",
+    "text": "4.1 Path Parameters: Positional Arguments in the URL\nWhen you define a Python function, positional arguments are required and ordered:\ndef get_quote(quote_id):\n    return quotes[quote_id]\nIn FastAPI, you declare the same requirement in the URL path by wrapping the variable in curly braces. FastAPI automatically extracts that segment from the address and hands it to your function as a named argument.\n@app.get(\"/quotes/{quote_id}\")\ndef get_quote(quote_id: int):\n    return {\"quote_id\": quote_id, \"message\": \"Here is your quote\"}\nNotice the type hint int? FastAPI performs automatic conversion for you. When someone visits /quotes/42, the string \"42\" becomes the integer 42 before your function ever sees it. If they try /quotes/abc, FastAPI returns a friendly 422 Unprocessable Entity (remember that “bad data” status code?) without you writing a single line of validation logic.\nThink of the path parameter as the specific file drawer you want opened. It’s mandatory—it’s part of the address itself.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#query-parameters-keyword-arguments-with-defaults",
+    "href": "part-02.html#query-parameters-keyword-arguments-with-defaults",
+    "title": "3  Building Real Endpoints",
+    "section": "4.2 Query Parameters: Keyword Arguments with Defaults",
+    "text": "4.2 Query Parameters: Keyword Arguments with Defaults\nSometimes you want optional modifiers, like asking for results in a specific order or limiting how many items you receive. In Python, you’d use keyword arguments with defaults:\ndef list_quotes(limit=10, sort_by=\"date\"):\n    ...\nIn web terms, these become query parameters attached to the end of the URL with a question mark: /quotes?limit=5&sort_by=author.\nDeclare them in FastAPI by including them in the function signature but not in the path string:\n@app.get(\"/quotes\")\ndef list_quotes(limit: int = 10, author: str | None = None):\n    return {\"limit\": limit, \"filter_by\": author}\nIf the caller provides ?limit=20, your function receives 20. If they omit it, you get your default of 10. The pipe syntax str | None (or Optional[str] in older Python) tells FastAPI this parameter is optional—like a keyword argument without a required value.\nQuery parameters are perfect for searching, filtering, and pagination. Later, when we build our chat application, we’ll use them to let clients request message history with a specific limit.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#request-bodies-shipping-structured-data",
+    "href": "part-02.html#request-bodies-shipping-structured-data",
+    "title": "3  Building Real Endpoints",
+    "section": "4.3 Request Bodies: Shipping Structured Data",
+    "text": "4.3 Request Bodies: Shipping Structured Data\nPath and query parameters work for simple strings and numbers, but what if you need to ship a complex package? When creating a new quote (or sending a chat prompt to an LLM), you need to transmit a whole dictionary of structured information.\nIn Python, you’d define a dataclass or a TypedDict to structure that data. FastAPI uses Pydantic models, which are essentially dataclasses with built-in validation and automatic documentation generation.\nfrom pydantic import BaseModel\n\nclass QuoteCreate(BaseModel):\n    text: str\n    author: str\n    tags: list[str] = []\nNow you can ask for this model as a parameter, and FastAPI knows to look for it in the HTTP request body:\n@app.post(\"/quotes\")\ndef create_quote(quote: QuoteCreate):\n    return {\"stored\": quote.text, \"by\": quote.author}\nWhen a client sends a POST request with JSON like {\"text\": \"Be curious\", \"author\": \"Anonymous\"}, FastAPI validates that both required fields are present and that text is indeed a string. If the client forgets the author field, they receive a detailed 422 error pointing exactly to what’s missing—automatically, before your function runs.\nThis is where FastAPI shines for LLM applications: later, we’ll define a ChatRequest model with fields like message and temperature, ensuring that every prompt sent to the AI is properly structured and validated.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#response-models-guaranteeing-your-output-contract",
+    "href": "part-02.html#response-models-guaranteeing-your-output-contract",
+    "title": "3  Building Real Endpoints",
+    "section": "4.4 Response Models: Guaranteeing Your Output Contract",
+    "text": "4.4 Response Models: Guaranteeing Your Output Contract\nJust as you validate what comes in, you can guarantee what goes out. In Python, you trust that a function returns what it promises. Over a network, that trust needs enforcement because the client is often written by someone else (or by your future self, three months later).\nResponse models act as type hints for your return values. FastAPI will validate that you’re sending exactly the shape of data you promised, filtering out any extra fields you might accidentally include.\nfrom pydantic import BaseModel\n\nclass Quote(BaseModel):\n    id: int\n    text: str\n    author: str\n\n@app.get(\"/quotes/{quote_id}\", response_model=Quote)\ndef get_quote(quote_id: int):\n    # Even if this dictionary had extra keys like \"internal_note\",\n    # FastAPI would strip them and return only id, text, and author\n    return {\n        \"id\": quote_id,\n        \"text\": \"The journey of a thousand miles...\",\n        \"author\": \"Lao Tzu\"\n    }\nThe response_model parameter tells FastAPI: “No matter what happens inside this function, the outside world only sees this structure.” This creates a reliable contract for frontend developers and makes your API documentation in Swagger UI instantly trustworthy.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#handling-errors-gracefully-with-httpexception",
+    "href": "part-02.html#handling-errors-gracefully-with-httpexception",
+    "title": "3  Building Real Endpoints",
+    "section": "4.5 Handling Errors Gracefully with HTTPException",
+    "text": "4.5 Handling Errors Gracefully with HTTPException\nIn a normal Python script, when something goes wrong, you raise an exception and the program crashes or catches it. In a web API, you can’t crash—you must send a polite letter explaining the problem so the client can react appropriately.\nFastAPI provides HTTPException to convert Python errors into proper HTTP status codes. Think of it as raising a KeyError or ValueError, but with a number attached so the caller knows what went wrong.\nfrom fastapi import HTTPException\n\n@app.get(\"/quotes/{quote_id}\")\ndef get_quote(quote_id: int):\n    if quote_id not in quotes_db:\n        raise HTTPException(status_code=404, detail=\"Quote not found\")\n    return quotes_db[quote_id]\nNow, instead of a mysterious server crash (status 500), the client receives a clean 404 Not Found with the message “Quote not found.” This maps perfectly to your Python intuition: looking up a missing dictionary key raises KeyError; looking up a missing resource returns HTTP 404.\nYou can use different codes for different situations: - 400 for “you sent bad data” (like a ValueError) - 401/403 for authentication issues (like a permission error) - 422 for validation failures (handled automatically by Pydantic)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#the-request-lifecycle-a-visual-map",
+    "href": "part-02.html#the-request-lifecycle-a-visual-map",
+    "title": "3  Building Real Endpoints",
+    "section": "4.6 The Request Lifecycle: A Visual Map",
+    "text": "4.6 The Request Lifecycle: A Visual Map\nBefore we build our checkpoint project, let’s visualize exactly what happens when a request hits your FastAPI application. This flow happens for every single endpoint call, whether it’s a simple health check or a complex LLM streaming response.\n%%{init: {'theme': 'handDrawn'}}%%\nflowchart LR\n    A[HTTP Request&lt;br/&gt;arrives] --&gt; B{Path & Query&lt;br/&gt;Parameter&lt;br/&gt;Extraction}\n    B --&gt; C{Request Body&lt;br/&gt;Pydantic&lt;br/&gt;Validation}\n    C --&gt; D[Your Route&lt;br/&gt;Function&lt;br/&gt;Executes]\n    D --&gt; E{Response Model&lt;br/&gt;Validation &&lt;br/&gt;Serialization}\n    E --&gt; F[JSON Response&lt;br/&gt;sent to Client]\n    \n    style A fill:#e8dcc4,stroke:#000\n    style B fill:#fdf1b8,stroke:#000\n    style C fill:#fdf1b8,stroke:#000\n    style D fill:#d8e2dc,stroke:#000\n    style E fill:#fdf1b8,stroke:#000\n    style F fill:#e8dcc4,stroke:#000\nNotice how validation acts as a safety net on both sides of your code. Before your function runs, FastAPI ensures the inputs match your Python type hints. After your function finishes, FastAPI ensures the output matches your response model. You focus on the business logic in the middle (that green box) while FastAPI handles the wire protocol.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#checkpoint-a-quote-of-the-day-api",
+    "href": "part-02.html#checkpoint-a-quote-of-the-day-api",
+    "title": "3  Building Real Endpoints",
+    "section": "4.7 Checkpoint: A Quote of the Day API",
+    "text": "4.7 Checkpoint: A Quote of the Day API\nLet’s wire everything together into a working mini-application. We’ll build a “Quote of the Day” service that stores quotes in memory (no database yet—just a Python dictionary) and exposes a clean REST API. This practices all the mechanics you’ll need for the LLM chat app later, but without the complexity of external API calls.\nStart fresh with a new file, quotes_app.py:\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\n# Our \"database\"—just a dictionary in memory\nquotes_db = {}\nnext_id = 1\n\n# Pydantic models for type safety\nclass QuoteCreate(BaseModel):\n    text: str\n    author: str\n\nclass Quote(BaseModel):\n    id: int\n    text: str\n    author: str\nNow add the creation endpoint. Notice we use the QuoteCreate model for input and the Quote model for output:\n@app.post(\"/quotes\", response_model=Quote)\ndef create_quote(quote_data: QuoteCreate):\n    global next_id\n    new_quote = {\n        \"id\": next_id,\n        \"text\": quote_data.text,\n        \"author\": quote_data.author\n    }\n    quotes_db[next_id] = new_quote\n    next_id += 1\n    return new_quote\nNext, the retrieval endpoint with path parameter and error handling:\n@app.get(\"/quotes/{quote_id}\", response_model=Quote)\ndef get_quote(quote_id: int):\n    if quote_id not in quotes_db:\n        raise HTTPException(status_code=404, detail=f\"Quote {quote_id} not found\")\n    return quotes_db[quote_id]\nFinally, a listing endpoint with query parameters for pagination:\n@app.get(\"/quotes\")\ndef list_quotes(limit: int = 10, skip: int = 0):\n    all_quotes = list(quotes_db.values())\n    return all_quotes[skip : skip + limit]\nTest this in your Swagger UI (/docs): 1. POST to /quotes with {\"text\": \"Simplicity is the ultimate sophistication\", \"author\": \"Leonardo da Vinci\"}. Note the returned ID. 2. POST another quote to see the auto-incrementing IDs. 3. GET /quotes/1 to retrieve your first quote by its path parameter. 4. GET /quotes/1 with a non-existent ID to see your 404 error in action. 5. GET /quotes?limit=1 to test the query parameter filtering.\nYou’ve now built a complete CRUD-style API (well, CR without the Update/Delete) using pure Python data structures. The skills here—path parameters for resource IDs, request bodies for creation data, response models for guaranteed output, and HTTPException for missing resources—are exactly what we’ll use when we replace “quotes” with “chat messages” and eventually call out to an LLM for the responses.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-02.html#part-recap-terms-you-learned",
+    "href": "part-02.html#part-recap-terms-you-learned",
+    "title": "3  Building Real Endpoints",
+    "section": "4.8 Part Recap: Terms You Learned",
+    "text": "4.8 Part Recap: Terms You Learned\nHere’s the vocabulary you’ve added to your mental dictionary, mapping web concepts to Python patterns you already know:\n\n\n\n\n\n\n\nWeb Term\nWhat it actually means in Python\n\n\n\n\nPath Parameter\nA positional argument extracted from the URL path, like /items/{item_id} mapping to def get_item(item_id)\n\n\nQuery Parameter\nA keyword argument with a default value, extracted from the URL query string like ?limit=10\n\n\nRequest Body\nA Pydantic model (like a dataclass) shipped as JSON in the POST request, automatically validated\n\n\nResponse Model\nThe output type hint that guarantees the shape of your returned JSON, filtering extra fields\n\n\nHTTPException\nThe bridge between Python exceptions and HTTP status codes; raise it to send 404, 400, etc.\n\n\nValidation\nThe automatic checking that incoming data matches your Pydantic types, returning 422 if it fails\n\n\n\nIn the next section, we’ll tackle the async mindset. You’ll learn why calling a slow LLM API without async would freeze up your entire server, and how dependency injection keeps your code clean when managing external clients. These concepts will transform your Quote API into a responsive, production-ready chat service.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Building Real Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html",
+    "href": "part-03.html",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "",
+    "text": "5 The Async Mindset and Dependency Injection\nYou have built a solid foundation. You can create endpoints that accept arguments, validate complex data with Pydantic, and return guaranteed structures. If this were a local Python script, you would be done. But web servers live in a world where many people talk at once, and some of those conversations move at the speed of molasses—like waiting for an LLM to finish generating a paragraph, or a database to hunt down a record.\nIn this section, we will teach your server to juggle. We will introduce async and await, the keywords that let one Python process handle hundreds of slow conversations without breaking a sweat. We will also solve a housekeeping problem: how do you share expensive resources (like a connection to an LLM service) across many requests without rebuilding them every time? The answer, Dependency Injection, will make your code cleaner and your server faster.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html#the-blocking-problem-the-steakhouse-analogy",
+    "href": "part-03.html#the-blocking-problem-the-steakhouse-analogy",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "5.1 The Blocking Problem: The Steakhouse Analogy",
+    "text": "5.1 The Blocking Problem: The Steakhouse Analogy\nImagine you open a tiny restaurant with one chef—you. A customer orders a steak that takes ten minutes to cook. If you stand motionless in front of the grill, staring at the meat, every other hungry customer in line waits in silence. That is a blocking server.\nIn Python web terms, “standing motionless” happens whenever your code waits for something outside the CPU. We call this I/O-bound work—Input/Output operations like reading a file, querying a database, or calling an external API over the network. While Python waits for the network to respond, the entire server thread is stuck. Other requests pile up like angry customers.\n%%{init: {'theme': 'handDrawn'}}%%\nsequenceDiagram\n    participant C1 as Customer 1 (Slow Order)\n    participant C2 as Customer 2 (Quick Order)\n    participant S as Sync Server (One Chef)\n    \n    C1-&gt;&gt;S: POST /slow-query (starts)\n    Note over S: Waiting... (blocked for 5s)\n    C2-&gt;&gt;S: GET /health (arrives, but...)\n    Note over C2: Waiting in line...\n    Note over S: Still waiting...\n    S-&gt;&gt;C1: Response (5s later)\n    S-&gt;&gt;C2: Response (served after C1)\n    \n    style C1 fill:#e8dcc4,stroke:#000\n    style C2 fill:#fdf1b8,stroke:#000\n    style S fill:#d8e2dc,stroke:#000\nNow imagine you are a brilliant chef. You start the steak, set a timer, take the next order, pour a coffee, check on the steak, and keep moving. That is async. You are still one person, but you are never idle while waiting.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html#introducing-async-and-await",
+    "href": "part-03.html#introducing-async-and-await",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "5.2 Introducing Async and Await",
+    "text": "5.2 Introducing Async and Await\nPython uses two keywords to enable this juggling act: async and await.\nWhen you declare a function with async def, you are telling Python: “This function might pause itself to let others work.” When you write await in front of a slow operation (like an API call), you are saying: “I am stepping aside; let the next customer in line while I wait for this to finish.”\nHere is the simplest possible async endpoint. It does not even call an external service yet—it just pretends to be slow using asyncio.sleep, which is the polite cousin of time.sleep because it yields control instead of hogging it.\nimport asyncio\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/slow\")\nasync def slow_endpoint():\n    # This simulates a 5-second database query or LLM call\n    await asyncio.sleep(5)\n    return {\"message\": \"Sorry for the wait, here is your data\"}\nNotice the async on the function definition and the await on the sleep. If you hit this endpoint in a browser, it takes five seconds. But here is the magic: if your friend hits the /health endpoint on the same server during those five seconds, they get an instant response. The server was not blocked. It was waiting for your slow request, yes, but it was waiting politely, allowing the event loop—the invisible manager—to serve others.\nDo not worry about the event loop itself; FastAPI and Uvicorn handle that manager for you. Just remember the rule: if a function touches the network or the filesystem and might take time, make it async def and await the slow parts.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html#dependency-injection-sharing-the-kitchen-tools",
+    "href": "part-03.html#dependency-injection-sharing-the-kitchen-tools",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "5.3 Dependency Injection: Sharing the Kitchen Tools",
+    "text": "5.3 Dependency Injection: Sharing the Kitchen Tools\nNow for our second challenge. When we start calling real LLM APIs (or databases), we need a client object—like httpx.AsyncClient or the official OpenAI client—to make the HTTP request. Creating this client is slow; it opens network connections and negotiates settings. If you create a brand new client inside every route function, you are essentially sharpening your knife for every single vegetable you chop.\nDependency Injection (DI) is the pattern of “injecting” shared resources into your functions rather than building them inside. Think of it as having a sous-chef who hands you the right tool, already prepared, just when you need it.\nFastAPI makes this effortless with the Depends utility. You create a “dependency function” that yields the resource, and FastAPI calls it for you, caching the result for subsequent requests and cleaning up when the server shuts down.\nHere is how you share an async HTTP client safely:\nfrom fastapi import Depends\nimport httpx\n\n# This is the dependency provider\nasync def get_http_client():\n    # Create once, reuse many times\n    async with httpx.AsyncClient() as client:\n        yield client\n        # Cleanup happens automatically when the server shuts down\n\n@app.get(\"/fetch\")\nasync def fetch_data(client: httpx.AsyncClient = Depends(get_http_client)):\n    # The client is magically provided, already connected\n    response = await client.get(\"https://api.github.com\")\n    return {\"status\": response.status_code}\nThe magic is in = Depends(get_http_client). FastAPI sees this, runs your dependency function, and passes the resulting client as an argument. If ten requests hit this endpoint simultaneously, they all share the same client connection pool efficiently. When you shut down Uvicorn, the async with context manager closes connections gracefully.\nThis pattern becomes essential for LLM apps. You will create a dependency that holds your configured OpenAI or Anthropic client, ensuring your API key is loaded once and reused safely across all chat requests.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html#keeping-secrets-safe",
+    "href": "part-03.html#keeping-secrets-safe",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "5.4 Keeping Secrets Safe",
+    "text": "5.4 Keeping Secrets Safe\nSpeaking of API keys, we need a brief but serious word about secrets. Hardcoding your LLM key into main.py is like writing your bank PIN on your debit card. Instead, we use environment variables—configuration that lives outside your code—and Pydantic to validate them.\nInstall the helper:\npip install pydantic-settings\nCreate a settings object that reads from your .env file automatically:\nfrom pydantic_settings import BaseSettings\n\nclass Settings(BaseSettings):\n    openai_api_key: str\n    model_name: str = \"gpt-4\"  # Default value if not in env\n    \n    class Config:\n        env_file = \".env\"\n\nsettings = Settings()\n\n# Now use it in your dependency\ndef get_settings():\n    return settings\nYour .env file (never commit this to Git!) looks like:\nOPENAI_API_KEY=sk-...\nMODEL_NAME=gpt-3.5-turbo\nIn your routes, access settings via dependency injection: settings: Settings = Depends(get_settings). This keeps sensitive credentials out of your source code and lets you change models without redeploying.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html#checkpoint-the-async-quote-server",
+    "href": "part-03.html#checkpoint-the-async-quote-server",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "5.5 Checkpoint: The Async Quote Server",
+    "text": "5.5 Checkpoint: The Async Quote Server\nLet us bring it all together by upgrading your Quote of the Day API from Part 2. We will convert it to async, add a fake “slow” quote lookup to prove non-blocking behavior, and inject a shared “database connection” (simulated with a simple class).\nFirst, the dependency. We will create a fake database handler that takes time to “connect”:\nimport asyncio\nfrom fastapi import FastAPI, Depends, HTTPException\n\napp = FastAPI()\n\n# Simulating an expensive-to-create resource\nclass QuoteDatabase:\n    def __init__(self):\n        # Imagine this opens a real Postgres connection pool\n        self.quotes = {\n            1: {\"text\": \"Patience is a virtue\", \"author\": \"Unknown\"},\n            2: {\"text\": \"FastAPI is fun\", \"author\": \"You\"}\n        }\n    \n    async def get_by_id(self, quote_id: int):\n        # Simulate network latency to a real database\n        await asyncio.sleep(2)  \n        if quote_id not in self.quotes:\n            raise HTTPException(status_code=404, detail=\"Quote not found\")\n        return self.quotes[quote_id]\n\n# The dependency provider\nasync def get_db():\n    db = QuoteDatabase()  # In production, you'd cache this properly\n    try:\n        yield db\n    finally:\n        # Cleanup would happen here (close connections)\n        pass\nNow, two endpoints to test concurrency. One is slow (uses the database), one is instant:\n@app.get(\"/quotes/{quote_id}\")\nasync def get_quote(quote_id: int, db: QuoteDatabase = Depends(get_db)):\n    # This takes 2 seconds due to the simulated latency inside db.get_by_id\n    quote = await db.get_by_id(quote_id)\n    return quote\n\n@app.get(\"/health\")\nasync def health():\n    # This responds instantly, even if /quotes/1 is grinding away\n    return {\"status\": \"ok\", \"server\": \"async and ready\"}\nTesting workflow: 1. Start the server: uvicorn main:app --reload 2. In one terminal (or browser tab), request the slow quote: curl http://localhost:8000/quotes/1 (This will hang for 2 seconds) 3. Immediately, in a second terminal, hit the health check: curl http://localhost:8000/health\nYou will see the health check return instantly, while the quote request takes its full two seconds. If you had written this synchronously (using time.sleep instead of await asyncio.sleep), the health check would have waited in line behind the slow quote, taking over two seconds itself. This proves your server is juggling.\nTry it with three or four simultaneous slow requests. They all run concurrently, finishing around the same time, rather than queuing up and taking 2 + 2 + 2 + 2 = 8 seconds total.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-03.html#part-recap-terms-you-learned",
+    "href": "part-03.html#part-recap-terms-you-learned",
+    "title": "4  The Async Mindset and Dependency Injection",
+    "section": "5.6 Part Recap: Terms You Learned",
+    "text": "5.6 Part Recap: Terms You Learned\nYou have crossed the bridge from simple scripts to concurrent, production-ready services. Here is the vocabulary that unlocks this new power:\n\n\n\n\n\n\n\nWeb Term\nWhat it actually means in Python\n\n\n\n\nAsync (async def)\nA marker telling Python this function can pause itself to let other work happen\n\n\nAwait (await)\nThe keyword that triggers the pause, specifically for I/O operations like network calls\n\n\nBlocking I/O\nWaiting for external resources (network, disk) in a way that freezes the entire thread\n\n\nEvent Loop\nThe invisible manager (run by Uvicorn) that juggles all your paused async functions\n\n\nDependency Injection\nThe pattern of providing pre-built tools (like database clients) to your functions via Depends()\n\n\nYield (in dependencies)\nThe way a dependency provides a resource to the route, then waits to clean up after the request finishes\n\n\n\nYou are now ready for the final stretch. In the next section, we will replace that fake two-second database delay with a real call to an LLM API. We will stream the response word-by-word back to the browser, and you will see exactly why all this async preparation was worth the effort.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The Async Mindset and Dependency Injection</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html",
+    "href": "part-04.html",
+    "title": "5  Building the LLM Chat Application",
+    "section": "",
+    "text": "6 Building the LLM Chat Application\nWe have arrived at the capstone. You have learned to accept data over the wire, validate it with Pydantic, handle errors gracefully, and juggle slow operations without blocking your server. Now we will apply every one of these skills to build something that feels like magic: a streaming chat API that talks to a large language model, forwarding words to your browser as fast as the AI generates them.\nWe will build this in two phases. First, a simple “send a prompt, get a full response” endpoint—easier to debug and perfect for simple clients. Then we will upgrade it to streaming, where words trickle across the network one by one, creating that familiar ChatGPT-typewriter effect. Finally, we will open a door for frontend developers by configuring CORS, allowing a React or Vue application to chat with your server.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#architecture-overview",
+    "href": "part-04.html#architecture-overview",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.1 Architecture Overview",
+    "text": "6.1 Architecture Overview\nBefore we write code, picture the journey of a single chat message. Your user types “Tell me a joke” into a web interface. That text travels to your FastAPI server, which acts as a thoughtful concierge. Your server reformats the request, adds the secret API key securely from environment variables, and passes it to OpenAI or Anthropic. When the AI responds, your server does not just dump the whole paragraph back; it can choose to either hand over the complete text at once, or relay words as they arrive.\n%%{init: {'theme': 'handDrawn'}}%%\nflowchart LR\n    A[Browser/Frontend&lt;br/&gt;Chat Interface] --&gt;|HTTP POST /chat| B[Your FastAPI App&lt;br/&gt;Validation & Logic]\n    B --&gt;|Async API Call&lt;br/&gt;with Secret Key| C[LLM Provider&lt;br/&gt;OpenAI/Anthropic]\n    C --&gt;|Streaming Tokens| B\n    B --&gt;|JSON or&lt;br/&gt;SSE Stream| A\n    \n    style A fill:#e8dcc4,stroke:#000\n    style B fill:#d8e2dc,stroke:#000\n    style C fill:#fdf1b8,stroke:#000\nYour application sits in the middle—validating inputs, managing secrets, handling the slow network conversation with the AI, and deciding how to parcel out the response.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#phase-one-the-non-streaming-endpoint",
+    "href": "part-04.html#phase-one-the-non-streaming-endpoint",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.2 Phase One: The Non-Streaming Endpoint",
+    "text": "6.2 Phase One: The Non-Streaming Endpoint\nLet us start with the simpler version: the user sends a message, we wait for the entire LLM response to finish, then we return it as one clean JSON package. This is easier to test in Swagger UI and handles errors more straightforwardly.\nFirst, our Pydantic models. We need a request model describing what the user sends, and a response model guaranteeing what they receive. Notice how we reuse the ChatMessage concept—this structures the back-and-forth history:\nfrom pydantic import BaseModel\nfrom typing import List\n\nclass ChatMessage(BaseModel):\n    role: str  # \"user\" or \"assistant\"\n    content: str\n\nclass ChatRequest(BaseModel):\n    messages: List[ChatMessage]\n    temperature: float = 0.7  # Controls creativity, 0 to 1\n\nclass ChatResponse(BaseModel):\n    reply: str\n    tokens_used: int\nNow, the endpoint. We will use the dependency injection pattern from Part 3 to manage our LLM client. For this example, we will use the OpenAI Python client, but the pattern is identical for Anthropic or any other async HTTP client:\nfrom fastapi import FastAPI, Depends, HTTPException\nfrom openai import AsyncOpenAI\nimport os\n\napp = FastAPI()\n\n# Dependency: configured client\nasync def get_openai_client():\n    client = AsyncOpenAI(api_key=os.getenv(\"OPENAI_API_KEY\"))\n    try:\n        yield client\n    finally:\n        # AsyncOpenAI handles cleanup automatically, but explicit is nice\n        pass\n\n@app.post(\"/chat\", response_model=ChatResponse)\nasync def chat_endpoint(\n    request: ChatRequest, \n    client: AsyncOpenAI = Depends(get_openai_client)\n):\n    try:\n        # This is the slow network call we learned to await\n        completion = await client.chat.completions.create(\n            model=\"gpt-3.5-turbo\",\n            messages=[msg.model_dump() for msg in request.messages],\n            temperature=request.temperature\n        )\n        \n        return ChatResponse(\n            reply=completion.choices[0].message.content,\n            tokens_used=completion.usage.total_tokens\n        )\n        \n    except Exception as e:\n        # Translate any OpenAI error into a clean HTTP 500\n        # In production, you might distinguish rate limits (429) vs auth errors (401)\n        raise HTTPException(\n            status_code=503, \n            detail=f\"LLM service unavailable: {str(e)}\"\n        )\nTest this in Swagger UI. You send:\n{\n  \"messages\": [{\"role\": \"user\", \"content\": \"Say hello in French\"}],\n  \"temperature\": 0.5\n}\nAfter a brief wait, you receive the full JSON response. The server was awaiting the OpenAI call, so during that second or two of waiting, your health check endpoint and other routes remained perfectly responsive.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#phase-two-streaming-responses",
+    "href": "part-04.html#phase-two-streaming-responses",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.3 Phase Two: Streaming Responses",
+    "text": "6.3 Phase Two: Streaming Responses\nNow for the upgrade. Waiting for the full response feels sluggish when answers are long. We want words to appear as they are generated, like watching someone type in real time.\nIn Python, you know about generators—functions that yield values one by one instead of returning everything at once. We will use an async generator (async for) to receive tokens from OpenAI, and FastAPI’s StreamingResponse to pipe them to the browser using a format called Server-Sent Events (SSE).\nThink of a normal return as handing over a sealed envelope. Streaming is like reading a letter aloud over the phone, sentence by sentence, while you are still receiving it.\nHere is the streaming endpoint. Notice how it shares the same dependency injection and error handling concepts, but changes the return type:\nfrom fastapi.responses import StreamingResponse\nfrom openai import AsyncOpenAI\n\nasync def generate_chat_stream(messages, client: AsyncOpenAI):\n    \"\"\"Async generator that yields text chunks as they arrive from OpenAI.\"\"\"\n    try:\n        stream = await client.chat.completions.create(\n            model=\"gpt-3.5-turbo\",\n            messages=[msg.model_dump() for msg in messages],\n            stream=True  # The magic word\n        )\n        \n        # This loop runs as the AI generates each token\n        async for chunk in stream:\n            if content := chunk.choices[0].delta.content:\n                # Yield the text chunk formatted as SSE\n                yield f\"data: {content}\\n\\n\"\n                \n        # Signal that the stream is complete\n        yield \"data: [DONE]\\n\\n\"\n        \n    except Exception as e:\n        # Even streams need error handling\n        yield f\"data: ERROR: {str(e)}\\n\\n\"\n\n@app.post(\"/chat/stream\")\nasync def chat_stream_endpoint(\n    request: ChatRequest,\n    client: AsyncOpenAI = Depends(get_openai_client)\n):\n    return StreamingResponse(\n        generate_chat_stream(request.messages, client),\n        media_type=\"text/event-stream\"\n    )\nThe media_type=\"text/event-stream\" tells the browser: “This is not a JSON file; this is a live feed that keeps coming.” Each yield sends a chunk immediately over the wire.\nTo test this, use curl in your terminal (browsers handle SSE specially):\ncurl -X POST http://localhost:8000/chat/stream \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"messages\": [{\"role\": \"user\", \"content\": \"Count to 10 slowly\"}], \"temperature\": 0.5}'\nYou will see numbers appear one by one, with slight delays between them, rather than all at once after ten seconds.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#cors-opening-the-door-to-frontend-developers",
+    "href": "part-04.html#cors-opening-the-door-to-frontend-developers",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.4 CORS: Opening the Door to Frontend Developers",
+    "text": "6.4 CORS: Opening the Door to Frontend Developers\nYour API works beautifully when tested with curl or Swagger UI, but there is a security guard standing between web browsers and your server. The Same-Origin Policy prevents a web page served from localhost:3000 (your React app) from talking to localhost:8000 (your FastAPI app) unless your server explicitly grants permission.\nThink of CORS (Cross-Origin Resource Sharing) as a bouncer at a club. By default, he blocks anyone from a different neighborhood. We need to hand him a list saying “Let in anyone from localhost:3000” (during development) or “Let in my official frontend domain” (in production).\nFastAPI makes this one line of configuration using middleware—a wrapper that runs around every request:\nfrom fastapi.middleware.cors import CORSMiddleware\n\n# Add this right after creating your app instance\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"http://localhost:3000\", \"http://localhost:5173\"],  # Vite and Create React App defaults\n    allow_credentials=True,\n    allow_methods=[\"*\"],  # GET, POST, etc.\n    allow_headers=[\"*\"],  # Content-Type, etc.\n)\nNow your frontend team can build a chat interface in React, Vue, or vanilla JavaScript, and it will communicate seamlessly with your streaming endpoint.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#the-capstone-project-a-working-chat-api",
+    "href": "part-04.html#the-capstone-project-a-working-chat-api",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.5 The Capstone Project: A Working Chat API",
+    "text": "6.5 The Capstone Project: A Working Chat API\nLet us wire everything together into a complete, productionish example. We will add in-memory conversation history so the AI remembers context across messages, and we will structure the code cleanly.\nCreate chat_app.py:\nfrom fastapi import FastAPI, Depends, HTTPException\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom pydantic import BaseModel\nfrom openai import AsyncOpenAI\nfrom typing import List\nimport os\nimport asyncio\n\napp = FastAPI()\n\n# CORS for frontend developers\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],  # Be restrictive in production!\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# Data models\nclass ChatMessage(BaseModel):\n    role: str\n    content: str\n\nclass ChatRequest(BaseModel):\n    messages: List[ChatMessage]\n    temperature: float = 0.7\n\n# In-memory storage (use Redis or database in production)\nconversation_history: List[ChatMessage] = []\n\n# Dependencies\nasync def get_llm_client():\n    client = AsyncOpenAI(api_key=os.getenv(\"OPENAI_API_KEY\"))\n    yield client\n\n# Non-streaming: reliable and simple\n@app.post(\"/chat\")\nasync def chat(\n    request: ChatRequest,\n    client: AsyncOpenAI = Depends(get_llm_client)\n):\n    try:\n        # Add user message to history\n        conversation_history.extend(request.messages)\n        \n        completion = await client.chat.completions.create(\n            model=\"gpt-3.5-turbo\",\n            messages=[m.model_dump() for m in conversation_history],\n            temperature=request.temperature\n        )\n        \n        reply = completion.choices[0].message.content\n        conversation_history.append(ChatMessage(role=\"assistant\", content=reply))\n        \n        return {\"reply\": reply, \"history_length\": len(conversation_history)}\n        \n    except Exception as e:\n        raise HTTPException(status_code=503, detail=str(e))\n\n# Streaming: the polished UX\n@app.post(\"/chat/stream\")\nasync def chat_stream(\n    request: ChatRequest,\n    client: AsyncOpenAI = Depends(get_llm_client)\n):\n    async def event_generator():\n        stream = await client.chat.completions.create(\n            model=\"gpt-3.5-turbo\",\n            messages=[m.model_dump() for m in request.messages],\n            stream=True\n        )\n        \n        full_response = []\n        async for chunk in stream:\n            if content := chunk.choices[0].delta.content:\n                full_response.append(content)\n                yield f\"data: {content}\\n\\n\"\n        \n        # Store complete message in history after streaming\n        conversation_history.append(\n            ChatMessage(role=\"assistant\", content=\"\".join(full_response))\n        )\n        yield \"data: [DONE]\\n\\n\"\n    \n    return StreamingResponse(event_generator(), media_type=\"text/event-stream\")\n\n@app.get(\"/history\")\ndef get_history():\n    \"\"\"See what the AI remembers\"\"\"\n    return {\"messages\": conversation_history}\nYou now have a complete system: validated inputs, dependency-injected LLM client, streaming and non-streaming options, CORS-enabled for frontends, graceful error handling, and conversation memory.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#testing-and-next-steps",
+    "href": "part-04.html#testing-and-next-steps",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.6 Testing and Next Steps",
+    "text": "6.6 Testing and Next Steps\nBefore you ship this, write a quick test using FastAPI’s TestClient. It runs your app without starting the real server, perfect for CI/CD pipelines:\nfrom fastapi.testclient import TestClient\n\nclient = TestClient(app)\n\ndef test_chat_endpoint():\n    response = client.post(\"/chat\", json={\n        \"messages\": [{\"role\": \"user\", \"content\": \"Hi\"}],\n        \"temperature\": 0.5\n    })\n    assert response.status_code == 200\n    assert \"reply\" in response.json()\nFor deployment, remember that async scales beautifully, but you still need to handle: - Lifespan events: Use @app.on_event(\"startup\") or the modern contextlib.asynccontextmanager lifespan to initialize your database or LLM client once, not per request. - Real databases: Replace that conversation_history list with PostgreSQL and an async ORM like SQLModel or Prisma Client Python. - Secrets management: Move from .env files to proper secret managers like AWS Secrets Manager or HashiCorp Vault in production.\nYou have built a foundation that serves equally well for inventory APIs, data dashboards, or AI applications. The patterns—Pydantic for contracts, async for concurrency, dependencies for resource management—are the modern standard for Python web services.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  },
+  {
+    "objectID": "part-04.html#part-recap-terms-you-learned",
+    "href": "part-04.html#part-recap-terms-you-learned",
+    "title": "5  Building the LLM Chat Application",
+    "section": "6.7 Part Recap: Terms You Learned",
+    "text": "6.7 Part Recap: Terms You Learned\nYou have crossed the threshold from tutorial follower to API architect. Here is the final vocabulary set:\n\n\n\n\n\n\n\nWeb Term\nWhat it actually means in Python\n\n\n\n\nStreamingResponse\nA special return type that lets you yield data incrementally over a persistent HTTP connection\n\n\nServer-Sent Events (SSE)\nThe protocol format (data: ...\\n\\n) for sending a stream of text updates from server to browser\n\n\nCORS\nThe browser security system that blocks cross-domain requests unless explicitly allowed via middleware\n\n\nGenerator (yield)\nA function that produces values one at a time, pausing between each, perfect for streaming chunks\n\n\nAsync Generator (async for)\nA generator that can await slow operations (like LLM tokens) between yields\n\n\nLifespan Events\nHooks for running setup (connect to DB) and teardown (cleanup) around your server’s life\n\n\n\nYour FastAPI journey is complete. You began thinking of the web as remote function calls, learned to validate and structure data with Pydantic, mastered the async juggling act, and finally connected to the slow, wondrous world of AI APIs. Whatever you build next—chatbots, data pipelines, or mobile backends—you have the tools to make it fast, reliable, and clean.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Building the LLM Chat Application</span>"
+    ]
+  }
+]
