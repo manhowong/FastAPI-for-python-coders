@@ -16,7 +16,7 @@ We will build this in two phases. First, a simple "send a prompt, get a full res
 
 Before we write code, picture the journey of a single chat message. Your user types "Tell me a joke" into a web interface. That text travels to your FastAPI server, which acts as a thoughtful concierge. Your server reformats the request, adds the secret API key securely from environment variables, and passes it to OpenAI or Anthropic. When the AI responds, your server does not just dump the whole paragraph back; it can choose to either hand over the complete text at once, or relay words as they arrive.
 
-```mermaid
+```{mermaid}
 %%{init: {'theme': 'handDrawn'}}%%
 flowchart LR
     A[Browser/Frontend<br/>Chat Interface] -->|HTTP POST /chat| B[Your FastAPI App<br/>Validation & Logic]

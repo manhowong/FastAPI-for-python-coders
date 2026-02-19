@@ -137,7 +137,7 @@ You can use different codes for different situations:
 
 Before we build our checkpoint project, let’s visualize exactly what happens when a request hits your FastAPI application. This flow happens for every single endpoint call, whether it’s a simple health check or a complex LLM streaming response.
 
-```mermaid
+```{mermaid}
 %%{init: {'theme': 'handDrawn'}}%%
 flowchart LR
     A[HTTP Request<br/>arrives] --> B{Path & Query<br/>Parameter<br/>Extraction}

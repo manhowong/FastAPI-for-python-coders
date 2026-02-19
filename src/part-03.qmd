@@ -18,8 +18,7 @@ Imagine you open a tiny restaurant with one chef—you. A customer orders a stea
 
 In Python web terms, "standing motionless" happens whenever your code waits for something outside the CPU. We call this **I/O-bound** work—Input/Output operations like reading a file, querying a database, or calling an external API over the network. While Python waits for the network to respond, the **entire server thread** is stuck. Other requests pile up like angry customers.
 
-```mermaid
-%%{init: {'theme': 'handDrawn'}}%%
+```{mermaid}
 sequenceDiagram
     participant C1 as Customer 1 (Slow Order)
     participant C2 as Customer 2 (Quick Order)
@@ -32,10 +31,6 @@ sequenceDiagram
     Note over S: Still waiting...
     S->>C1: Response (5s later)
     S->>C2: Response (served after C1)
-    
-    style C1 fill:#e8dcc4,stroke:#000
-    style C2 fill:#fdf1b8,stroke:#000
-    style S fill:#d8e2dc,stroke:#000
 ```
 
 Now imagine you are a brilliant chef. You start the steak, set a timer, take the next order, pour a coffee, check on the steak, and keep moving. That is **async**. You are still one person, but you are never idle while waiting.
