@@ -1,4 +1,5 @@
 ﻿---
+number-depth: 0
 format:
   html:
     toc: false
