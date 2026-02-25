@@ -11,7 +11,6 @@ book:
     - part-01.qmd
     - part-02.qmd
     - part-03.qmd
-    - part-04.qmd
 
   sidebar:
     logo: "images/book.png"
