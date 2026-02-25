@@ -1,3 +1,12 @@
-﻿# FastAPI for Python Coders {.unnumbered .unlisted}
+﻿---
+title: "FastAPI for Python Coders"
+format:
+  html:
+    toc: false
+---
+
+
+
+# Welcome {.unnumbered .unlisted}
 
 A friendly FastAPI tutorial for Python coders with zero web background.
