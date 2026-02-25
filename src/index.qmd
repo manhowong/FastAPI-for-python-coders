@@ -2,6 +2,6 @@
 title: "FastAPI for Python Coders"
 ---
 
-# FastAPI for Python Coders
+# FastAPI for Python Coders {.unnumbered .unlisted}
 
 A friendly FastAPI tutorial for Python coders with zero web background.
