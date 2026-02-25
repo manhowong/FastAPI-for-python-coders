@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; From URL Paths to Python Parameters – FastAPI for Python Coders</title>
+<title>2&nbsp; From URL Paths to Python Parameters – FastAPI for Python Coders</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -127,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-02.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-02.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -159,25 +159,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">FastAPI for Python Coders</span></span></a>
+ <span class="menu-text">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-01.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-02.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-03.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span></a>
   </div>
 </li>
     </ul>
@@ -190,14 +190,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#path-parameters-required-values-inside-the-url-path" id="toc-path-parameters-required-values-inside-the-url-path" class="nav-link active" data-scroll-target="#path-parameters-required-values-inside-the-url-path"><span class="header-section-number">3.1</span> Path Parameters: Required Values Inside the URL Path</a></li>
-  <li><a href="#query-parameters-optional-url-inputs-with-defaults" id="toc-query-parameters-optional-url-inputs-with-defaults" class="nav-link" data-scroll-target="#query-parameters-optional-url-inputs-with-defaults"><span class="header-section-number">3.2</span> Query Parameters: Optional URL Inputs with Defaults</a></li>
-  <li><a href="#request-bodies-when-input-belongs-in-json-not-the-url" id="toc-request-bodies-when-input-belongs-in-json-not-the-url" class="nav-link" data-scroll-target="#request-bodies-when-input-belongs-in-json-not-the-url"><span class="header-section-number">3.3</span> Request Bodies: When Input Belongs in JSON, Not the URL</a></li>
-  <li><a href="#response-models-controlling-exactly-what-your-api-returns" id="toc-response-models-controlling-exactly-what-your-api-returns" class="nav-link" data-scroll-target="#response-models-controlling-exactly-what-your-api-returns"><span class="header-section-number">3.4</span> Response Models: Controlling Exactly What Your API Returns</a></li>
-  <li><a href="#httpexception-turning-python-errors-into-http-status-codes" id="toc-httpexception-turning-python-errors-into-http-status-codes" class="nav-link" data-scroll-target="#httpexception-turning-python-errors-into-http-status-codes"><span class="header-section-number">3.5</span> HTTPException: Turning Python Errors into HTTP Status Codes</a></li>
-  <li><a href="#the-request-lifecycle-a-visual-map" id="toc-the-request-lifecycle-a-visual-map" class="nav-link" data-scroll-target="#the-request-lifecycle-a-visual-map"><span class="header-section-number">3.6</span> The Request Lifecycle: A Visual Map</a></li>
-  <li><a href="#hands-on-a-quote-of-the-day-api" id="toc-hands-on-a-quote-of-the-day-api" class="nav-link" data-scroll-target="#hands-on-a-quote-of-the-day-api"><span class="header-section-number">3.7</span> Hands-On: A Quote of the Day API</a></li>
-  <li><a href="#recap-terms-you-learned" id="toc-recap-terms-you-learned" class="nav-link" data-scroll-target="#recap-terms-you-learned"><span class="header-section-number">3.8</span> Recap: Terms You Learned</a></li>
+  <li><a href="#path-parameters-required-values-inside-the-url-path" id="toc-path-parameters-required-values-inside-the-url-path" class="nav-link active" data-scroll-target="#path-parameters-required-values-inside-the-url-path"><span class="header-section-number">2.1</span> Path Parameters: Required Values Inside the URL Path</a></li>
+  <li><a href="#query-parameters-optional-url-inputs-with-defaults" id="toc-query-parameters-optional-url-inputs-with-defaults" class="nav-link" data-scroll-target="#query-parameters-optional-url-inputs-with-defaults"><span class="header-section-number">2.2</span> Query Parameters: Optional URL Inputs with Defaults</a></li>
+  <li><a href="#request-bodies-when-input-belongs-in-json-not-the-url" id="toc-request-bodies-when-input-belongs-in-json-not-the-url" class="nav-link" data-scroll-target="#request-bodies-when-input-belongs-in-json-not-the-url"><span class="header-section-number">2.3</span> Request Bodies: When Input Belongs in JSON, Not the URL</a></li>
+  <li><a href="#response-models-controlling-exactly-what-your-api-returns" id="toc-response-models-controlling-exactly-what-your-api-returns" class="nav-link" data-scroll-target="#response-models-controlling-exactly-what-your-api-returns"><span class="header-section-number">2.4</span> Response Models: Controlling Exactly What Your API Returns</a></li>
+  <li><a href="#httpexception-turning-python-errors-into-http-status-codes" id="toc-httpexception-turning-python-errors-into-http-status-codes" class="nav-link" data-scroll-target="#httpexception-turning-python-errors-into-http-status-codes"><span class="header-section-number">2.5</span> HTTPException: Turning Python Errors into HTTP Status Codes</a></li>
+  <li><a href="#the-request-lifecycle-a-visual-map" id="toc-the-request-lifecycle-a-visual-map" class="nav-link" data-scroll-target="#the-request-lifecycle-a-visual-map"><span class="header-section-number">2.6</span> The Request Lifecycle: A Visual Map</a></li>
+  <li><a href="#hands-on-a-quote-of-the-day-api" id="toc-hands-on-a-quote-of-the-day-api" class="nav-link" data-scroll-target="#hands-on-a-quote-of-the-day-api"><span class="header-section-number">2.7</span> Hands-On: A Quote of the Day API</a></li>
+  <li><a href="#recap-terms-you-learned" id="toc-recap-terms-you-learned" class="nav-link" data-scroll-target="#recap-terms-you-learned"><span class="header-section-number">2.8</span> Recap: Terms You Learned</a></li>
   </ul>
 </nav>
     </div>
@@ -206,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></h1>
 </div>
 
 
@@ -225,8 +225,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>Remember how Python functions work? Some parameters are required, some have defaults, and you validate what gets passed in. FastAPI endpoints work exactly the same way: the URL just becomes another way to pass arguments to your function.</p>
 <p>To demonstrate how FastAPI works with URL paths, we will build a simple “Quote of the Day” API along the way.</p>
-<section id="path-parameters-required-values-inside-the-url-path" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="path-parameters-required-values-inside-the-url-path"><span class="header-section-number">3.1</span> Path Parameters: Required Values Inside the URL Path</h2>
+<section id="path-parameters-required-values-inside-the-url-path" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="path-parameters-required-values-inside-the-url-path"><span class="header-section-number">2.1</span> Path Parameters: Required Values Inside the URL Path</h2>
 <p>When you define a Python function, positional arguments are required and ordered:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -237,8 +237,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>When someone visits, say, <code>your-api-url/quotes/42</code>, FastAPI automatically: - Extracts the value of the path parameter from the URL (in this case, <code>42</code>) - Converts it to an integer (because of the <code>int</code> type hint) - Passes it as the <code>quote_id</code> argument to your <code>get_quote</code> function</p>
 <p>The path parameter is mandatory (it is part of the URL path) and the value must be convertible to the specified type: - If someone tries to access <code>/quotes/</code> without providing a <code>quote_id</code>, they’ll get a <strong>404 error</strong> since that URL doesn’t match any defined route. - If they try <code>/quotes/abc</code>, FastAPI returns a friendly <strong>422 Unprocessable Entity</strong>.</p>
 </section>
-<section id="query-parameters-optional-url-inputs-with-defaults" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="query-parameters-optional-url-inputs-with-defaults"><span class="header-section-number">3.2</span> Query Parameters: Optional URL Inputs with Defaults</h2>
+<section id="query-parameters-optional-url-inputs-with-defaults" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="query-parameters-optional-url-inputs-with-defaults"><span class="header-section-number">2.2</span> Query Parameters: Optional URL Inputs with Defaults</h2>
 <p>Just like Python functions can have optional keyword arguments with default values, FastAPI allows you to define <strong>query parameters</strong> that are passed in the URL <strong>after a question mark (<code>?</code>)</strong>, e.g.&nbsp;<code>/quotes?limit=20&amp;author=Shakespeare</code>.</p>
 <p>Declare them in FastAPI by including them in the function signature but <em>not</em> in the path string:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
@@ -249,8 +249,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Can you write <code>author: str = None</code> without the <code>| None</code>? Yes, but it’s less explicit. The <code>| None</code> makes it clear that <code>None</code> is an acceptable value, while just <code>str = None</code> could be misinterpreted as a string that defaults to the literal “None”. Using <code>str | None</code> is more idiomatic in modern Python and FastAPI code.</p>
 <p>Query parameters are perfect for searching, filtering, and pagination.</p>
 </section>
-<section id="request-bodies-when-input-belongs-in-json-not-the-url" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="request-bodies-when-input-belongs-in-json-not-the-url"><span class="header-section-number">3.3</span> Request Bodies: When Input Belongs in JSON, Not the URL</h2>
+<section id="request-bodies-when-input-belongs-in-json-not-the-url" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="request-bodies-when-input-belongs-in-json-not-the-url"><span class="header-section-number">2.3</span> Request Bodies: When Input Belongs in JSON, Not the URL</h2>
 <p>Path and query parameters work for simple strings and numbers, but what if you need to pass a more complex structure, like dictionary with multiple fields? You don’t want to cram that into the URL. Instead, you send it as JSON in the <strong>request body</strong>.</p>
 <p>In Python, you might define a function that takes a dictionary or a dataclass as an argument. In FastAPI, you use <strong>Pydantic models</strong> to define the expected structure of the incoming JSON. Pydantic models are like Python dataclasses but with built-in validation and parsing.</p>
 <p>For example, if you want to create a new quote with a text and an author:</p>
@@ -266,8 +266,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"stored"</span>: quote.text, <span class="st">"by"</span>: quote.author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>When a client sends a POST request with JSON like <code>{"text": "Be curious", "author": "Anonymous"}</code>: - FastAPI automatically parses the JSON, validates that it has the required fields (<code>text</code> and <code>author</code>), that <code>text</code> and <code>author</code> are strings, and that <code>tags</code> is a list of strings (if provided). - If the client forgets the <code>author</code> field, they receive a detailed 422 error pointing exactly to what’s missing.</p>
 </section>
-<section id="response-models-controlling-exactly-what-your-api-returns" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="response-models-controlling-exactly-what-your-api-returns"><span class="header-section-number">3.4</span> Response Models: Controlling Exactly What Your API Returns</h2>
+<section id="response-models-controlling-exactly-what-your-api-returns" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="response-models-controlling-exactly-what-your-api-returns"><span class="header-section-number">2.4</span> Response Models: Controlling Exactly What Your API Returns</h2>
 <p>Like request bodies, you can define a <strong>response model</strong> using Pydantic. This tells FastAPI: “No matter what happens inside this function, the outside world only sees this structure.”</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -286,8 +286,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: <span class="st">"Lao Tzu"</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="httpexception-turning-python-errors-into-http-status-codes" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="httpexception-turning-python-errors-into-http-status-codes"><span class="header-section-number">3.5</span> HTTPException: Turning Python Errors into HTTP Status Codes</h2>
+<section id="httpexception-turning-python-errors-into-http-status-codes" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="httpexception-turning-python-errors-into-http-status-codes"><span class="header-section-number">2.5</span> HTTPException: Turning Python Errors into HTTP Status Codes</h2>
 <p>In a Python script, when something goes wrong, you raise an exception and the program crashes or catches it. In a web API, you can’t crash—you must send a polite letter explaining the problem so the client can react appropriately.</p>
 <p>FastAPI provides <code>HTTPException</code> to convert Python errors into proper HTTP status codes:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> HTTPException</span>
@@ -300,8 +300,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Now, instead of a mysterious server crash (status 500), the client receives a clean <strong>404 Not Found</strong> with the message “Quote not found.”</p>
 <p>You can use different codes for different situations: - <strong>400</strong> for “you sent bad data” (like a <code>ValueError</code>) - <strong>401/403</strong> for authentication issues (like a permission error) - <strong>422</strong> for validation failures (handled by Pydantic)</p>
 </section>
-<section id="the-request-lifecycle-a-visual-map" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="the-request-lifecycle-a-visual-map"><span class="header-section-number">3.6</span> The Request Lifecycle: A Visual Map</h2>
+<section id="the-request-lifecycle-a-visual-map" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="the-request-lifecycle-a-visual-map"><span class="header-section-number">2.6</span> The Request Lifecycle: A Visual Map</h2>
 <p>Let’s visualize exactly what happens when your FastAPI app receives a request. This flow happens for every single endpoint call.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
@@ -338,8 +338,8 @@ flowchart TD
 </div>
 <p>Validation acts as a safety net on both sides of your code: FastAPI ensures the inputs match your Python type hints and the output matches your response model. You focus on the function logic in the middle while FastAPI handles the wire protocol.</p>
 </section>
-<section id="hands-on-a-quote-of-the-day-api" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="hands-on-a-quote-of-the-day-api"><span class="header-section-number">3.7</span> Hands-On: A Quote of the Day API</h2>
+<section id="hands-on-a-quote-of-the-day-api" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="hands-on-a-quote-of-the-day-api"><span class="header-section-number">2.7</span> Hands-On: A Quote of the Day API</h2>
 <p>Let’s wire everything together into a working mini-application. We’ll build a “Quote of the Day” service that stores quotes in a Python dictionary and exposes a clean “REST” API (i.e, a web API that follows standard HTTP conventions).</p>
 <p>Start fresh with a new file, <code>quotes_app.py</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
@@ -388,8 +388,8 @@ flowchart TD
 <span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_quotes[skip : skip <span class="op">+</span> limit]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Test this in your Swagger UI (<code>/docs</code>): 1. POST to <code>/quotes</code> with <code>{"text": "Short cuts make long delays.", "author": "JRR Tolkien"}</code>. Note the returned ID. 2. POST another quote to see the auto-incrementing IDs. 3. GET <code>/quotes/1</code> to retrieve your first quote by its path parameter. 4. GET <code>/quotes/1</code> with a non-existent ID to see your 404 error in action. 5. GET <code>/quotes?limit=1</code> to test the query parameter filtering.</p>
 </section>
-<section id="recap-terms-you-learned" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="recap-terms-you-learned"><span class="header-section-number">3.8</span> Recap: Terms You Learned</h2>
+<section id="recap-terms-you-learned" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="recap-terms-you-learned"><span class="header-section-number">2.8</span> Recap: Terms You Learned</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -836,12 +836,12 @@ flowchart TD
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./part-01.html" class="pagination-link" aria-label="The Web as Remote Function Calls">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./part-03.html" class="pagination-link" aria-label="How FastAPI Handles Many Requests at Once">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; How FastAPI Handles Many Requests at Once – FastAPI for Python Coders</title>
+<title>3&nbsp; How FastAPI Handles Many Requests at Once – FastAPI for Python Coders</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -126,7 +126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-03.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-03.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -158,25 +158,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">FastAPI for Python Coders</span></span></a>
+ <span class="menu-text">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-01.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The Web as Remote Function Calls</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-02.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-03.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span></a>
   </div>
 </li>
     </ul>
@@ -189,12 +189,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#why-one-slow-call-delays-everyone" id="toc-why-one-slow-call-delays-everyone" class="nav-link active" data-scroll-target="#why-one-slow-call-delays-everyone"><span class="header-section-number">4.1</span> Why One Slow Call Delays Everyone</a></li>
-  <li><a href="#async-and-await-pause-one-request-serve-another" id="toc-async-and-await-pause-one-request-serve-another" class="nav-link" data-scroll-target="#async-and-await-pause-one-request-serve-another"><span class="header-section-number">4.2</span> <code>async</code> and <code>await</code>: Pause One Request, Serve Another</a></li>
-  <li><a href="#dependency-injection-reusing-shared-tools-cleanly" id="toc-dependency-injection-reusing-shared-tools-cleanly" class="nav-link" data-scroll-target="#dependency-injection-reusing-shared-tools-cleanly"><span class="header-section-number">4.3</span> Dependency Injection: Reusing Shared Tools Cleanly</a></li>
-  <li><a href="#keeping-api-keys-safe" id="toc-keeping-api-keys-safe" class="nav-link" data-scroll-target="#keeping-api-keys-safe"><span class="header-section-number">4.4</span> Keeping API Keys Safe</a></li>
-  <li><a href="#hands-on-upgrade-the-quote-api-to-async-depends" id="toc-hands-on-upgrade-the-quote-api-to-async-depends" class="nav-link" data-scroll-target="#hands-on-upgrade-the-quote-api-to-async-depends"><span class="header-section-number">4.5</span> Hands-On: Upgrade the Quote API to Async + Depends</a></li>
-  <li><a href="#recap-terms-you-learned" id="toc-recap-terms-you-learned" class="nav-link" data-scroll-target="#recap-terms-you-learned"><span class="header-section-number">4.6</span> Recap: Terms You Learned</a></li>
+  <li><a href="#why-one-slow-call-delays-everyone" id="toc-why-one-slow-call-delays-everyone" class="nav-link active" data-scroll-target="#why-one-slow-call-delays-everyone"><span class="header-section-number">3.1</span> Why One Slow Call Delays Everyone</a></li>
+  <li><a href="#async-and-await-pause-one-request-serve-another" id="toc-async-and-await-pause-one-request-serve-another" class="nav-link" data-scroll-target="#async-and-await-pause-one-request-serve-another"><span class="header-section-number">3.2</span> <code>async</code> and <code>await</code>: Pause One Request, Serve Another</a></li>
+  <li><a href="#dependency-injection-reusing-shared-tools-cleanly" id="toc-dependency-injection-reusing-shared-tools-cleanly" class="nav-link" data-scroll-target="#dependency-injection-reusing-shared-tools-cleanly"><span class="header-section-number">3.3</span> Dependency Injection: Reusing Shared Tools Cleanly</a></li>
+  <li><a href="#keeping-api-keys-safe" id="toc-keeping-api-keys-safe" class="nav-link" data-scroll-target="#keeping-api-keys-safe"><span class="header-section-number">3.4</span> Keeping API Keys Safe</a></li>
+  <li><a href="#hands-on-upgrade-the-quote-api-to-async-depends" id="toc-hands-on-upgrade-the-quote-api-to-async-depends" class="nav-link" data-scroll-target="#hands-on-upgrade-the-quote-api-to-async-depends"><span class="header-section-number">3.5</span> Hands-On: Upgrade the Quote API to Async + Depends</a></li>
+  <li><a href="#recap-terms-you-learned" id="toc-recap-terms-you-learned" class="nav-link" data-scroll-target="#recap-terms-you-learned"><span class="header-section-number">3.6</span> Recap: Terms You Learned</a></li>
   </ul>
 </nav>
     </div>
@@ -203,7 +203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></h1>
 </div>
 
 
@@ -220,8 +220,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="why-one-slow-call-delays-everyone" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="why-one-slow-call-delays-everyone"><span class="header-section-number">4.1</span> Why One Slow Call Delays Everyone</h2>
+<section id="why-one-slow-call-delays-everyone" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="why-one-slow-call-delays-everyone"><span class="header-section-number">3.1</span> Why One Slow Call Delays Everyone</h2>
 <p>Imagine a restaurant with one waiter handling every table. One table asks for a custom order that takes five minutes to confirm with the kitchen. If the waiter stands there waiting, no other table gets service. That is a <strong>blocking</strong> server (one server worker/thread handling requests sequentially).</p>
 <p>In FastAPI terms, this happens during <strong>I/O-bound</strong> work: waiting on a database, file system, or external API. While that wait is happening, the server thread can’t move on, so other requests queue up.</p>
 <div class="cell" data-layout-align="default">
@@ -262,8 +262,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="async-and-await-pause-one-request-serve-another" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="async-and-await-pause-one-request-serve-another"><span class="header-section-number">4.2</span> <code>async</code> and <code>await</code>: Pause One Request, Serve Another</h2>
+<section id="async-and-await-pause-one-request-serve-another" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="async-and-await-pause-one-request-serve-another"><span class="header-section-number">3.2</span> <code>async</code> and <code>await</code>: Pause One Request, Serve Another</h2>
 <p>Python uses two keywords to juggle multiple requests without blocking: <code>async</code> and <code>await</code>. - When you declare a function with <code>async def</code>, you are telling Python: “This function might pause itself to let others work.” - When you write <code>await</code> in front of a slow operation (like an API call), you are saying: “I am stepping aside; let the next customer in line while I wait for this to finish.”</p>
 <p>Asynchronous operations are handled by an <strong>event loop</strong> (managed by Uvicorn), which keeps track of all the paused functions and wakes them up when their awaited operations complete.</p>
 <p>Here is a simple async endpoint. We will use <code>asyncio.sleep</code> to simulate a slow operation:</p>
@@ -280,8 +280,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>If you hit this endpoint in a browser, it takes five seconds. If your friend hits the <code>/health</code> endpoint on the same server during those five seconds, they get an instant response. The server was not blocked.</p>
 <p>Just remember the rule: if a function might take time, make it <code>async def</code> and <code>await</code> the slow parts.</p>
 </section>
-<section id="dependency-injection-reusing-shared-tools-cleanly" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="dependency-injection-reusing-shared-tools-cleanly"><span class="header-section-number">4.3</span> Dependency Injection: Reusing Shared Tools Cleanly</h2>
+<section id="dependency-injection-reusing-shared-tools-cleanly" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="dependency-injection-reusing-shared-tools-cleanly"><span class="header-section-number">3.3</span> Dependency Injection: Reusing Shared Tools Cleanly</h2>
 <p>Sometimes, your endpoint may need to call an external service (A database, a tool, etc.), so it needs a “client” to talk to that service (<strong>not to be confused with the “client” that calls your endpoint</strong>). A simple setup might look like this:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx <span class="co"># for creating HTTP clients</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -318,8 +318,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: response.status_code}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Why <code>yield</code> instead of <code>return</code>?</strong> With <code>return</code>, the function ends immediately—no chance to run cleanup later. <code>yield</code> pauses the function, hands over the client, waits for the endpoint to finish, then resumes so the <code>async with ... as</code> block can close connections.</p>
 </section>
-<section id="keeping-api-keys-safe" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="keeping-api-keys-safe"><span class="header-section-number">4.4</span> Keeping API Keys Safe</h2>
+<section id="keeping-api-keys-safe" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="keeping-api-keys-safe"><span class="header-section-number">3.4</span> Keeping API Keys Safe</h2>
 <p>When you create a client object for an external service, you often need to provide an API key for authentication in addition to the service URL. This is a secret credential that should never be hardcoded in your source code. Instead, we store it in a <code>.env</code> file as an environment variable and use Pydantic to validate them.</p>
 <p>Your <code>.env</code> file (never commit this to Git!) looks like:</p>
 <pre><code>OPENAI_API_KEY=... # If you are using OpenAI, for example
@@ -343,8 +343,8 @@ MODEL_NAME=...</code></pre>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can now access settings via dependency injection: <code>settings: Settings = Depends(get_settings)</code>.</p>
 </section>
-<section id="hands-on-upgrade-the-quote-api-to-async-depends" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="hands-on-upgrade-the-quote-api-to-async-depends"><span class="header-section-number">4.5</span> Hands-On: Upgrade the Quote API to Async + Depends</h2>
+<section id="hands-on-upgrade-the-quote-api-to-async-depends" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="hands-on-upgrade-the-quote-api-to-async-depends"><span class="header-section-number">3.5</span> Hands-On: Upgrade the Quote API to Async + Depends</h2>
 <p>Let us bring it all together by upgrading your Quote of the Day API from Part 2. We will convert it to async, add a fake “slow” quote lookup to prove non-blocking behavior, and inject a shared “database connection” (simulated with a simple class).</p>
 <p>First, the dependency. We will create a fake database handler that takes time to “connect”:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
@@ -390,8 +390,8 @@ MODEL_NAME=...</code></pre>
 <p>Testing workflow: 1. Start the server: <code>uvicorn main:app --reload</code> 2. In one terminal (or browser tab), request the slow quote: <code>curl http://localhost:8000/quotes/1</code> (This will hang for 2 seconds) 3. <em>Immediately</em>, in a second terminal, hit the health check: <code>curl http://localhost:8000/health</code></p>
 <p>You will see the health check return instantly, while the quote request takes its full two seconds. If you had written this synchronously (using <code>time.sleep</code> instead of <code>await asyncio.sleep</code>), the health check would have waited in line behind the slow quote, taking over two seconds itself.</p>
 </section>
-<section id="recap-terms-you-learned" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="recap-terms-you-learned"><span class="header-section-number">4.6</span> Recap: Terms You Learned</h2>
+<section id="recap-terms-you-learned" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="recap-terms-you-learned"><span class="header-section-number">3.6</span> Recap: Terms You Learned</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -834,7 +834,7 @@ MODEL_NAME=...</code></pre>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./part-02.html" class="pagination-link" aria-label="From URL Paths to Python Parameters">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
