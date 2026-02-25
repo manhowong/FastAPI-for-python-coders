@@ -6,8 +6,6 @@ format:
     code-fold: false
 ---
 
-# From URL Paths to Python Parameters
-
 Remember how Python functions work? Some parameters are required, some have defaults, and you validate what gets passed in. FastAPI endpoints work exactly the same way: the URL just becomes another way to pass arguments to your function.
 
 

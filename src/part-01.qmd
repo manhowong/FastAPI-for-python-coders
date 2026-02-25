@@ -6,8 +6,6 @@ format:
     code-fold: false
 ---
 
-# The Web as Remote Function Calls
-
 If you’ve ever written a Python script that calls a function, processes data, and prints results, you already know more than you think. Building a web API is essentially the same workflow, except the function call travels over the internet to reach someone else’s computer (or your own, running as a server simultaneously).
 
 We’ll anchor this journey by building toward a practical LLM-powered chat application—something that actually streams responses from an AI like a real product. But every skill you learn here applies equally to building inventory systems, data dashboards, or mobile app backends.

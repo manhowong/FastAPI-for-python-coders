@@ -6,9 +6,6 @@ format:
     code-fold: false
 ---
 
-# How FastAPI Handles Many Requests at Once
-
-
 ## Why One Slow Call Delays Everyone
 
 Imagine a restaurant with one waiter handling every table. One table asks for a custom order that takes five minutes to confirm with the kitchen. If the waiter stands there waiting, no other table gets service. That is a **blocking** server (one server worker/thread handling requests sequentially).

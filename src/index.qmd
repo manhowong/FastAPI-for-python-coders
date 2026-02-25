@@ -5,8 +5,6 @@ format:
     toc: false
 ---
 
-
-
 # Welcome {.unnumbered .unlisted}
 
 A friendly FastAPI tutorial for Python coders with zero web background.
