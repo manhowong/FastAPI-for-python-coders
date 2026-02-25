@@ -3,8 +3,18 @@ title: "FastAPI for Python Coders"
 format:
   html:
     toc: false
+format:
+  html:
+    toc: false
+    include-in-header:
+      - text: |
+          <style type="text/css">
+          h1.hide {
+            display: none;
+          }
+          </style>
 ---
 
-# Welcome {.unnumbered .unlisted}
+# Welcome {.hide .unnumbered .unlisted}
 
 A friendly FastAPI tutorial for Python coders with zero web background.
