@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Building Real Endpoints – FastAPI for Python Coders</title>
+<title>3&nbsp; From URL Paths to Python Parameters – FastAPI for Python Coders</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -78,7 +78,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a496c526c144800fb99e94ce0b766f38.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-52b5fc9297d81fd4a1287f4db593721f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -127,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-02.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-02.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -171,19 +171,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-02.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-03.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./part-04.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Building the LLM Chat Application</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span></a>
   </div>
 </li>
     </ul>
@@ -196,16 +190,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#building-real-endpoints" id="toc-building-real-endpoints" class="nav-link active" data-scroll-target="#building-real-endpoints"><span class="header-section-number">4</span> Building Real Endpoints</a>
+  <li><a href="#from-url-paths-to-python-parameters" id="toc-from-url-paths-to-python-parameters" class="nav-link active" data-scroll-target="#from-url-paths-to-python-parameters"><span class="header-section-number">4</span> From URL Paths to Python Parameters</a>
   <ul class="collapse">
-  <li><a href="#path-parameters-positional-arguments-in-the-url" id="toc-path-parameters-positional-arguments-in-the-url" class="nav-link" data-scroll-target="#path-parameters-positional-arguments-in-the-url"><span class="header-section-number">4.1</span> Path Parameters: Positional Arguments in the URL</a></li>
-  <li><a href="#query-parameters-keyword-arguments-with-defaults" id="toc-query-parameters-keyword-arguments-with-defaults" class="nav-link" data-scroll-target="#query-parameters-keyword-arguments-with-defaults"><span class="header-section-number">4.2</span> Query Parameters: Keyword Arguments with Defaults</a></li>
-  <li><a href="#request-bodies-shipping-structured-data" id="toc-request-bodies-shipping-structured-data" class="nav-link" data-scroll-target="#request-bodies-shipping-structured-data"><span class="header-section-number">4.3</span> Request Bodies: Shipping Structured Data</a></li>
-  <li><a href="#response-models-guaranteeing-your-output-contract" id="toc-response-models-guaranteeing-your-output-contract" class="nav-link" data-scroll-target="#response-models-guaranteeing-your-output-contract"><span class="header-section-number">4.4</span> Response Models: Guaranteeing Your Output Contract</a></li>
-  <li><a href="#handling-errors-gracefully-with-httpexception" id="toc-handling-errors-gracefully-with-httpexception" class="nav-link" data-scroll-target="#handling-errors-gracefully-with-httpexception"><span class="header-section-number">4.5</span> Handling Errors Gracefully with HTTPException</a></li>
+  <li><a href="#path-parameters-required-values-inside-the-url-path" id="toc-path-parameters-required-values-inside-the-url-path" class="nav-link" data-scroll-target="#path-parameters-required-values-inside-the-url-path"><span class="header-section-number">4.1</span> Path Parameters: Required Values Inside the URL Path</a></li>
+  <li><a href="#query-parameters-optional-url-inputs-with-defaults" id="toc-query-parameters-optional-url-inputs-with-defaults" class="nav-link" data-scroll-target="#query-parameters-optional-url-inputs-with-defaults"><span class="header-section-number">4.2</span> Query Parameters: Optional URL Inputs with Defaults</a></li>
+  <li><a href="#request-bodies-when-input-belongs-in-json-not-the-url" id="toc-request-bodies-when-input-belongs-in-json-not-the-url" class="nav-link" data-scroll-target="#request-bodies-when-input-belongs-in-json-not-the-url"><span class="header-section-number">4.3</span> Request Bodies: When Input Belongs in JSON, Not the URL</a></li>
+  <li><a href="#response-models-controlling-exactly-what-your-api-returns" id="toc-response-models-controlling-exactly-what-your-api-returns" class="nav-link" data-scroll-target="#response-models-controlling-exactly-what-your-api-returns"><span class="header-section-number">4.4</span> Response Models: Controlling Exactly What Your API Returns</a></li>
+  <li><a href="#httpexception-turning-python-errors-into-http-status-codes" id="toc-httpexception-turning-python-errors-into-http-status-codes" class="nav-link" data-scroll-target="#httpexception-turning-python-errors-into-http-status-codes"><span class="header-section-number">4.5</span> HTTPException: Turning Python Errors into HTTP Status Codes</a></li>
   <li><a href="#the-request-lifecycle-a-visual-map" id="toc-the-request-lifecycle-a-visual-map" class="nav-link" data-scroll-target="#the-request-lifecycle-a-visual-map"><span class="header-section-number">4.6</span> The Request Lifecycle: A Visual Map</a></li>
-  <li><a href="#checkpoint-a-quote-of-the-day-api" id="toc-checkpoint-a-quote-of-the-day-api" class="nav-link" data-scroll-target="#checkpoint-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Checkpoint: A Quote of the Day API</a></li>
-  <li><a href="#part-recap-terms-you-learned" id="toc-part-recap-terms-you-learned" class="nav-link" data-scroll-target="#part-recap-terms-you-learned"><span class="header-section-number">4.8</span> Part Recap: Terms You Learned</a></li>
+  <li><a href="#hands-on-a-quote-of-the-day-api" id="toc-hands-on-a-quote-of-the-day-api" class="nav-link" data-scroll-target="#hands-on-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Hands-On: A Quote of the Day API</a></li>
+  <li><a href="#recap-terms-you-learned" id="toc-recap-terms-you-learned" class="nav-link" data-scroll-target="#recap-terms-you-learned"><span class="header-section-number">4.8</span> Recap: Terms You Learned</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -215,7 +209,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></h1>
 </div>
 
 
@@ -232,102 +226,107 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="building-real-endpoints" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Building Real Endpoints</h1>
-<p>In the last section, you learned that a FastAPI endpoint is simply a function waiting for remote calls. But real functions don’t just sit there—they accept arguments, validate inputs, and return specific shapes of data. A function without parameters is like a coffee machine with only one button; useful, but limiting.</p>
-<p>Now we’ll give your endpoints the same flexibility your Python functions enjoy every day. You’ll learn to carve pieces out of the URL (like positional arguments), accept optional filters (like keyword arguments), and enforce strict contracts on both incoming and outgoing data using Pydantic. These are the tools that will let us later send structured prompts to an LLM and receive guaranteed JSON back.</p>
-<section id="path-parameters-positional-arguments-in-the-url" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="path-parameters-positional-arguments-in-the-url"><span class="header-section-number">4.1</span> Path Parameters: Positional Arguments in the URL</h2>
+<section id="from-url-paths-to-python-parameters" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> From URL Paths to Python Parameters</h1>
+<p>Remember how Python functions work? Some parameters are required, some have defaults, and you validate what gets passed in. FastAPI endpoints work exactly the same way: the URL just becomes another way to pass arguments to your function.</p>
+<p>To demonstrate how FastAPI works with URL paths, we will build a simple “Quote of the Day” API along the way.</p>
+<section id="path-parameters-required-values-inside-the-url-path" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="path-parameters-required-values-inside-the-url-path"><span class="header-section-number">4.1</span> Path Parameters: Required Values Inside the URL Path</h2>
 <p>When you define a Python function, positional arguments are required and ordered:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In FastAPI, you declare the same requirement in the URL path by wrapping the variable in curly braces. FastAPI automatically extracts that segment from the address and hands it to your function as a named argument.</p>
+<p>In FastAPI, you declare the same requirement in the URL path by <strong>wrapping the variable in curly braces</strong>. This is called a <strong>path parameter</strong>, For example:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"quote_id"</span>: quote_id, <span class="st">"message"</span>: <span class="st">"Here is your quote"</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Notice the type hint <code>int</code>? FastAPI performs automatic conversion for you. When someone visits <code>/quotes/42</code>, the string <code>"42"</code> becomes the integer <code>42</code> before your function ever sees it. If they try <code>/quotes/abc</code>, FastAPI returns a friendly <strong>422 Unprocessable Entity</strong> (remember that “bad data” status code?) without you writing a single line of validation logic.</p>
-<p>Think of the path parameter as the specific file drawer you want opened. It’s mandatory—it’s part of the address itself.</p>
+<p>When someone visits, say, <code>your-api-url/quotes/42</code>, FastAPI automatically: - Extracts the value of the path parameter from the URL (in this case, <code>42</code>) - Converts it to an integer (because of the <code>int</code> type hint) - Passes it as the <code>quote_id</code> argument to your <code>get_quote</code> function</p>
+<p>The path parameter is mandatory (it is part of the URL path) and the value must be convertible to the specified type: - If someone tries to access <code>/quotes/</code> without providing a <code>quote_id</code>, they’ll get a <strong>404 error</strong> since that URL doesn’t match any defined route. - If they try <code>/quotes/abc</code>, FastAPI returns a friendly <strong>422 Unprocessable Entity</strong>.</p>
 </section>
-<section id="query-parameters-keyword-arguments-with-defaults" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="query-parameters-keyword-arguments-with-defaults"><span class="header-section-number">4.2</span> Query Parameters: Keyword Arguments with Defaults</h2>
-<p>Sometimes you want optional modifiers, like asking for results in a specific order or limiting how many items you receive. In Python, you’d use keyword arguments with defaults:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit<span class="op">=</span><span class="dv">10</span>, sort_by<span class="op">=</span><span class="st">"date"</span>):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In web terms, these become <strong>query parameters</strong> attached to the end of the URL with a question mark: <code>/quotes?limit=5&amp;sort_by=author</code>.</p>
+<section id="query-parameters-optional-url-inputs-with-defaults" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="query-parameters-optional-url-inputs-with-defaults"><span class="header-section-number">4.2</span> Query Parameters: Optional URL Inputs with Defaults</h2>
+<p>Just like Python functions can have optional keyword arguments with default values, FastAPI allows you to define <strong>query parameters</strong> that are passed in the URL <strong>after a question mark (<code>?</code>)</strong>, e.g.&nbsp;<code>/quotes?limit=20&amp;author=Shakespeare</code>.</p>
 <p>Declare them in FastAPI by including them in the function signature but <em>not</em> in the path string:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, author: <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>):</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"limit"</span>: limit, <span class="st">"filter_by"</span>: author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If the caller provides <code>?limit=20</code>, your function receives <code>20</code>. If they omit it, you get your default of <code>10</code>. The pipe syntax <code>str | None</code> (or <code>Optional[str]</code> in older Python) tells FastAPI this parameter is optional—like a keyword argument without a required value.</p>
-<p>Query parameters are perfect for searching, filtering, and pagination. Later, when we build our chat application, we’ll use them to let clients request message history with a specific limit.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, author: <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"limit"</span>: limit, <span class="st">"filter_by"</span>: author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If the client provides <code>?limit=20</code>, your function receives <code>20</code>. If they omit it, you get your default of <code>10</code>.</p>
+<p>The pipe syntax <code>str | None</code> (or <code>Optional[str]</code> in older Python) tells FastAPI this parameter is optional.</p>
+<p>Can you write <code>author: str = None</code> without the <code>| None</code>? Yes, but it’s less explicit. The <code>| None</code> makes it clear that <code>None</code> is an acceptable value, while just <code>str = None</code> could be misinterpreted as a string that defaults to the literal “None”. Using <code>str | None</code> is more idiomatic in modern Python and FastAPI code.</p>
+<p>Query parameters are perfect for searching, filtering, and pagination.</p>
 </section>
-<section id="request-bodies-shipping-structured-data" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="request-bodies-shipping-structured-data"><span class="header-section-number">4.3</span> Request Bodies: Shipping Structured Data</h2>
-<p>Path and query parameters work for simple strings and numbers, but what if you need to ship a complex package? When creating a new quote (or sending a chat prompt to an LLM), you need to transmit a whole dictionary of structured information.</p>
-<p>In Python, you’d define a dataclass or a TypedDict to structure that data. FastAPI uses <strong>Pydantic models</strong>, which are essentially dataclasses with built-in validation and automatic documentation generation.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    tags: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> []</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now you can ask for this model as a parameter, and FastAPI knows to look for it in the HTTP request body:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote: QuoteCreate):</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"stored"</span>: quote.text, <span class="st">"by"</span>: quote.author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>When a client sends a POST request with JSON like <code>{"text": "Be curious", "author": "Anonymous"}</code>, FastAPI validates that both required fields are present and that <code>text</code> is indeed a string. If the client forgets the <code>author</code> field, they receive a detailed 422 error pointing exactly to what’s missing—automatically, before your function runs.</p>
-<p>This is where FastAPI shines for LLM applications: later, we’ll define a <code>ChatRequest</code> model with fields like <code>message</code> and <code>temperature</code>, ensuring that every prompt sent to the AI is properly structured and validated.</p>
+<section id="request-bodies-when-input-belongs-in-json-not-the-url" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="request-bodies-when-input-belongs-in-json-not-the-url"><span class="header-section-number">4.3</span> Request Bodies: When Input Belongs in JSON, Not the URL</h2>
+<p>Path and query parameters work for simple strings and numbers, but what if you need to pass a more complex structure, like dictionary with multiple fields? You don’t want to cram that into the URL. Instead, you send it as JSON in the <strong>request body</strong>.</p>
+<p>In Python, you might define a function that takes a dictionary or a dataclass as an argument. In FastAPI, you use <strong>Pydantic models</strong> to define the expected structure of the incoming JSON. Pydantic models are like Python dataclasses but with built-in validation and parsing.</p>
+<p>For example, if you want to create a new quote with a text and an author:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    tags: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> []</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now you can define an endpoint that accepts this model as the request body:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote: QuoteCreate):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"stored"</span>: quote.text, <span class="st">"by"</span>: quote.author}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>When a client sends a POST request with JSON like <code>{"text": "Be curious", "author": "Anonymous"}</code>: - FastAPI automatically parses the JSON, validates that it has the required fields (<code>text</code> and <code>author</code>), that <code>text</code> and <code>author</code> are strings, and that <code>tags</code> is a list of strings (if provided). - If the client forgets the <code>author</code> field, they receive a detailed 422 error pointing exactly to what’s missing.</p>
 </section>
-<section id="response-models-guaranteeing-your-output-contract" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="response-models-guaranteeing-your-output-contract"><span class="header-section-number">4.4</span> Response Models: Guaranteeing Your Output Contract</h2>
-<p>Just as you validate what comes in, you can guarantee what goes out. In Python, you trust that a function returns what it promises. Over a network, that trust needs enforcement because the client is often written by someone else (or by your future self, three months later).</p>
-<p>Response models act as type hints for your return values. FastAPI will validate that you’re sending exactly the shape of data you promised, filtering out any extra fields you might accidentally include.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<section id="response-models-controlling-exactly-what-your-api-returns" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="response-models-controlling-exactly-what-your-api-returns"><span class="header-section-number">4.4</span> Response Models: Controlling Exactly What Your API Returns</h2>
+<p>Like request bodies, you can define a <strong>response model</strong> using Pydantic. This tells FastAPI: “No matter what happens inside this function, the outside world only sees this structure.”</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Even if this dictionary had extra keys like "internal_note",</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FastAPI would strip them and return only id, text, and author</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: quote_id,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: <span class="st">"The journey of a thousand miles..."</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: <span class="st">"Lao Tzu"</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="httpexception-turning-python-errors-into-http-status-codes" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="httpexception-turning-python-errors-into-http-status-codes"><span class="header-section-number">4.5</span> HTTPException: Turning Python Errors into HTTP Status Codes</h2>
+<p>In a Python script, when something goes wrong, you raise an exception and the program crashes or catches it. In a web API, you can’t crash—you must send a polite letter explaining the problem so the client can react appropriately.</p>
+<p>FastAPI provides <code>HTTPException</code> to convert Python errors into proper HTTP status codes:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> HTTPException</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Even if this dictionary had extra keys like "internal_note",</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FastAPI would strip them and return only id, text, and author</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: quote_id,</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: <span class="st">"The journey of a thousand miles..."</span>,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: <span class="st">"Lao Tzu"</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>response_model</code> parameter tells FastAPI: “No matter what happens inside this function, the outside world only sees this structure.” This creates a reliable contract for frontend developers and makes your API documentation in Swagger UI instantly trustworthy.</p>
-</section>
-<section id="handling-errors-gracefully-with-httpexception" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="handling-errors-gracefully-with-httpexception"><span class="header-section-number">4.5</span> Handling Errors Gracefully with HTTPException</h2>
-<p>In a normal Python script, when something goes wrong, you raise an exception and the program crashes or catches it. In a web API, you can’t crash—you must send a polite letter explaining the problem so the client can react appropriately.</p>
-<p>FastAPI provides <code>HTTPException</code> to convert Python errors into proper HTTP status codes. Think of it as raising a <code>KeyError</code> or <code>ValueError</code>, but with a number attached so the caller knows what went wrong.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> HTTPException</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="st">"Quote not found"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now, instead of a mysterious server crash (status 500), the client receives a clean <strong>404 Not Found</strong> with the message “Quote not found.” This maps perfectly to your Python intuition: looking up a missing dictionary key raises <code>KeyError</code>; looking up a missing resource returns HTTP 404.</p>
-<p>You can use different codes for different situations: - <strong>400</strong> for “you sent bad data” (like a <code>ValueError</code>) - <strong>401/403</strong> for authentication issues (like a permission error) - <strong>422</strong> for validation failures (handled automatically by Pydantic)</p>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="st">"Quote not found"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now, instead of a mysterious server crash (status 500), the client receives a clean <strong>404 Not Found</strong> with the message “Quote not found.”</p>
+<p>You can use different codes for different situations: - <strong>400</strong> for “you sent bad data” (like a <code>ValueError</code>) - <strong>401/403</strong> for authentication issues (like a permission error) - <strong>422</strong> for validation failures (handled by Pydantic)</p>
 </section>
 <section id="the-request-lifecycle-a-visual-map" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="the-request-lifecycle-a-visual-map"><span class="header-section-number">4.6</span> The Request Lifecycle: A Visual Map</h2>
-<p>Before we build our checkpoint project, let’s visualize exactly what happens when a request hits your FastAPI application. This flow happens for every single endpoint call, whether it’s a simple health check or a complex LLM streaming response.</p>
+<p>Let’s visualize exactly what happens when your FastAPI app receives a request. This flow happens for every single endpoint call.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
 <div>
-<pre class="mermaid mermaid-js">%%{init: {'theme': 'handDrawn'}}%%
-flowchart LR
-    A[HTTP Request&lt;br/&gt;arrives] --&gt; B{Path &amp; Query&lt;br/&gt;Parameter&lt;br/&gt;Extraction}
-    B --&gt; C{Request Body&lt;br/&gt;Pydantic&lt;br/&gt;Validation}
-    C --&gt; D[Your Route&lt;br/&gt;Function&lt;br/&gt;Executes]
-    D --&gt; E{Response Model&lt;br/&gt;Validation &amp;&lt;br/&gt;Serialization}
+<pre class="mermaid mermaid-js">---
+config:
+    look: handDrawn
+    layout: elk
+    flowchart:
+        nodeSpacing: 20
+        rankSpacing: 30
+        padding: 15
+---
+flowchart TD
+    A[HTTP Request] --&gt; B[[Path &amp; Query Parameter Extraction]]
+    B --&gt; C[[Request Body&lt;br/&gt;Validation]]
+    C --&gt; D{{Route Function Executes}}
+    D --&gt; E[[Response Model&lt;br/&gt;Validation]]
     E --&gt; F[JSON Response&lt;br/&gt;sent to Client]
     
     style A fill:#e8dcc4,stroke:#000
@@ -342,59 +341,60 @@ flowchart LR
 </div>
 </div>
 </div>
-<p>Notice how validation acts as a safety net on both sides of your code. Before your function runs, FastAPI ensures the inputs match your Python type hints. After your function finishes, FastAPI ensures the output matches your response model. You focus on the business logic in the middle (that green box) while FastAPI handles the wire protocol.</p>
+<p>Validation acts as a safety net on both sides of your code: FastAPI ensures the inputs match your Python type hints and the output matches your response model. You focus on the function logic in the middle while FastAPI handles the wire protocol.</p>
 </section>
-<section id="checkpoint-a-quote-of-the-day-api" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="checkpoint-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Checkpoint: A Quote of the Day API</h2>
-<p>Let’s wire everything together into a working mini-application. We’ll build a “Quote of the Day” service that stores quotes in memory (no database yet—just a Python dictionary) and exposes a clean REST API. This practices all the mechanics you’ll need for the LLM chat app later, but without the complexity of external API calls.</p>
+<section id="hands-on-a-quote-of-the-day-api" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="hands-on-a-quote-of-the-day-api"><span class="header-section-number">4.7</span> Hands-On: A Quote of the Day API</h2>
+<p>Let’s wire everything together into a working mini-application. We’ll build a “Quote of the Day” service that stores quotes in a Python dictionary and exposes a clean “REST” API (i.e, a web API that follows standard HTTP conventions).</p>
 <p>Start fresh with a new file, <code>quotes_app.py</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Our "database"—just a dictionary in memory</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>quotes_db <span class="op">=</span> {}</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>next_id <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic models for type safety</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now add the creation endpoint. Notice we use the <code>QuoteCreate</code> model for input and the <code>Quote</code> model for output:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>, response_model<span class="op">=</span>Quote)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote_data: QuoteCreate):</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> next_id</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    new_quote <span class="op">=</span> {</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: next_id,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: quote_data.text,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: quote_data.author</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    quotes_db[next_id] <span class="op">=</span> new_quote</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    next_id <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_quote</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Next, the retrieval endpoint with path parameter and error handling:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="ss">f"Quote </span><span class="sc">{</span>quote_id<span class="sc">}</span><span class="ss"> not found"</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Finally, a listing endpoint with query parameters for pagination:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, skip: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>):</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    all_quotes <span class="op">=</span> <span class="bu">list</span>(quotes_db.values())</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_quotes[skip : skip <span class="op">+</span> limit]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Test this in your Swagger UI (<code>/docs</code>): 1. POST to <code>/quotes</code> with <code>{"text": "Simplicity is the ultimate sophistication", "author": "Leonardo da Vinci"}</code>. Note the returned ID. 2. POST another quote to see the auto-incrementing IDs. 3. GET <code>/quotes/1</code> to retrieve your first quote by its path parameter. 4. GET <code>/quotes/1</code> with a non-existent ID to see your 404 error in action. 5. GET <code>/quotes?limit=1</code> to test the query parameter filtering.</p>
-<p>You’ve now built a complete CRUD-style API (well, CR without the Update/Delete) using pure Python data structures. The skills here—path parameters for resource IDs, request bodies for creation data, response models for guaranteed output, and HTTPException for missing resources—are exactly what we’ll use when we replace “quotes” with “chat messages” and eventually call out to an LLM for the responses.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, HTTPException</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Our "database": a dictionary in memory</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>quotes_db <span class="op">=</span> {}</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>next_id <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic models for type safety</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteCreate(BaseModel):</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Quote(BaseModel):</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>: <span class="bu">int</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    author: <span class="bu">str</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Endpoint to create a new quote</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">"/quotes"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_quote(quote_data: QuoteCreate):</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> next_id</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    new_quote <span class="op">=</span> {</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: next_id,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text"</span>: quote_data.text,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"author"</span>: quote_data.author</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    quotes_db[next_id] <span class="op">=</span> new_quote</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    next_id <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_quote</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Endpoint to retrieve a quote by ID</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>, response_model<span class="op">=</span>Quote)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>):</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> quotes_db:</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="ss">f"Quote </span><span class="sc">{</span>quote_id<span class="sc">}</span><span class="ss"> not found"</span>)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quotes_db[quote_id]</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Endpoint to list quotes with pagination</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes"</span>)</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_quotes(limit: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>, skip: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>):</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    all_quotes <span class="op">=</span> <span class="bu">list</span>(quotes_db.values())</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_quotes[skip : skip <span class="op">+</span> limit]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Test this in your Swagger UI (<code>/docs</code>): 1. POST to <code>/quotes</code> with <code>{"text": "Short cuts make long delays.", "author": "JRR Tolkien"}</code>. Note the returned ID. 2. POST another quote to see the auto-incrementing IDs. 3. GET <code>/quotes/1</code> to retrieve your first quote by its path parameter. 4. GET <code>/quotes/1</code> with a non-existent ID to see your 404 error in action. 5. GET <code>/quotes?limit=1</code> to test the query parameter filtering.</p>
 </section>
-<section id="part-recap-terms-you-learned" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="part-recap-terms-you-learned"><span class="header-section-number">4.8</span> Part Recap: Terms You Learned</h2>
-<p>Here’s the vocabulary you’ve added to your mental dictionary, mapping web concepts to Python patterns you already know:</p>
+<section id="recap-terms-you-learned" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="recap-terms-you-learned"><span class="header-section-number">4.8</span> Recap: Terms You Learned</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -433,7 +433,6 @@ flowchart LR
 </tr>
 </tbody>
 </table>
-<p>In the next section, we’ll tackle the async mindset. You’ll learn why calling a slow LLM API without <code>async</code> would freeze up your entire server, and how dependency injection keeps your code clean when managing external clients. These concepts will transform your Quote API into a responsive, production-ready chat service.</p>
 
 
 </section>
@@ -847,8 +846,8 @@ flowchart LR
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./part-03.html" class="pagination-link" aria-label="The Async Mindset and Dependency Injection">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./part-03.html" class="pagination-link" aria-label="How FastAPI Handles Many Requests at Once">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

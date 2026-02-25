@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; The Async Mindset and Dependency Injection – FastAPI for Python Coders</title>
+<title>4&nbsp; How FastAPI Handles Many Requests at Once – FastAPI for Python Coders</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,7 +65,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./part-04.html" rel="next">
 <link href="./part-02.html" rel="prev">
 <link href="./images/book.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -78,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a496c526c144800fb99e94ce0b766f38.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-52b5fc9297d81fd4a1287f4db593721f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -127,7 +126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-03.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./part-03.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -171,19 +170,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-02.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./part-03.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./part-04.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Building the LLM Chat Application</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></span></a>
   </div>
 </li>
     </ul>
@@ -196,14 +189,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-async-mindset-and-dependency-injection" id="toc-the-async-mindset-and-dependency-injection" class="nav-link active" data-scroll-target="#the-async-mindset-and-dependency-injection"><span class="header-section-number">5</span> The Async Mindset and Dependency Injection</a>
+  <li><a href="#how-fastapi-handles-many-requests-at-once" id="toc-how-fastapi-handles-many-requests-at-once" class="nav-link active" data-scroll-target="#how-fastapi-handles-many-requests-at-once"><span class="header-section-number">5</span> How FastAPI Handles Many Requests at Once</a>
   <ul class="collapse">
-  <li><a href="#the-blocking-problem-the-steakhouse-analogy" id="toc-the-blocking-problem-the-steakhouse-analogy" class="nav-link" data-scroll-target="#the-blocking-problem-the-steakhouse-analogy"><span class="header-section-number">5.1</span> The Blocking Problem: The Steakhouse Analogy</a></li>
-  <li><a href="#introducing-async-and-await" id="toc-introducing-async-and-await" class="nav-link" data-scroll-target="#introducing-async-and-await"><span class="header-section-number">5.2</span> Introducing Async and Await</a></li>
-  <li><a href="#dependency-injection-sharing-the-kitchen-tools" id="toc-dependency-injection-sharing-the-kitchen-tools" class="nav-link" data-scroll-target="#dependency-injection-sharing-the-kitchen-tools"><span class="header-section-number">5.3</span> Dependency Injection: Sharing the Kitchen Tools</a></li>
-  <li><a href="#keeping-secrets-safe" id="toc-keeping-secrets-safe" class="nav-link" data-scroll-target="#keeping-secrets-safe"><span class="header-section-number">5.4</span> Keeping Secrets Safe</a></li>
-  <li><a href="#checkpoint-the-async-quote-server" id="toc-checkpoint-the-async-quote-server" class="nav-link" data-scroll-target="#checkpoint-the-async-quote-server"><span class="header-section-number">5.5</span> Checkpoint: The Async Quote Server</a></li>
-  <li><a href="#part-recap-terms-you-learned" id="toc-part-recap-terms-you-learned" class="nav-link" data-scroll-target="#part-recap-terms-you-learned"><span class="header-section-number">5.6</span> Part Recap: Terms You Learned</a></li>
+  <li><a href="#why-one-slow-call-delays-everyone" id="toc-why-one-slow-call-delays-everyone" class="nav-link" data-scroll-target="#why-one-slow-call-delays-everyone"><span class="header-section-number">5.1</span> Why One Slow Call Delays Everyone</a></li>
+  <li><a href="#async-and-await-pause-one-request-serve-another" id="toc-async-and-await-pause-one-request-serve-another" class="nav-link" data-scroll-target="#async-and-await-pause-one-request-serve-another"><span class="header-section-number">5.2</span> <code>async</code> and <code>await</code>: Pause One Request, Serve Another</a></li>
+  <li><a href="#dependency-injection-reusing-shared-tools-cleanly" id="toc-dependency-injection-reusing-shared-tools-cleanly" class="nav-link" data-scroll-target="#dependency-injection-reusing-shared-tools-cleanly"><span class="header-section-number">5.3</span> Dependency Injection: Reusing Shared Tools Cleanly</a></li>
+  <li><a href="#keeping-api-keys-safe" id="toc-keeping-api-keys-safe" class="nav-link" data-scroll-target="#keeping-api-keys-safe"><span class="header-section-number">5.4</span> Keeping API Keys Safe</a></li>
+  <li><a href="#hands-on-upgrade-the-quote-api-to-async-depends" id="toc-hands-on-upgrade-the-quote-api-to-async-depends" class="nav-link" data-scroll-target="#hands-on-upgrade-the-quote-api-to-async-depends"><span class="header-section-number">5.5</span> Hands-On: Upgrade the Quote API to Async + Depends</a></li>
+  <li><a href="#recap-terms-you-learned" id="toc-recap-terms-you-learned" class="nav-link" data-scroll-target="#recap-terms-you-learned"><span class="header-section-number">5.6</span> Recap: Terms You Learned</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -213,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Async Mindset and Dependency Injection</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How FastAPI Handles Many Requests at Once</span></h1>
 </div>
 
 
@@ -230,44 +223,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="the-async-mindset-and-dependency-injection" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> The Async Mindset and Dependency Injection</h1>
-<p>You have built a solid foundation. You can create endpoints that accept arguments, validate complex data with Pydantic, and return guaranteed structures. If this were a local Python script, you would be done. But web servers live in a world where many people talk at once, and some of those conversations move at the speed of molasses—like waiting for an LLM to finish generating a paragraph, or a database to hunt down a record.</p>
-<p>In this section, we will teach your server to juggle. We will introduce <code>async</code> and <code>await</code>, the keywords that let one Python process handle hundreds of slow conversations without breaking a sweat. We will also solve a housekeeping problem: how do you share expensive resources (like a connection to an LLM service) across many requests without rebuilding them every time? The answer, <strong>Dependency Injection</strong>, will make your code cleaner and your server faster.</p>
-<section id="the-blocking-problem-the-steakhouse-analogy" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="the-blocking-problem-the-steakhouse-analogy"><span class="header-section-number">5.1</span> The Blocking Problem: The Steakhouse Analogy</h2>
-<p>Imagine you open a tiny restaurant with one chef—you. A customer orders a steak that takes ten minutes to cook. If you stand motionless in front of the grill, staring at the meat, every other hungry customer in line waits in silence. That is a <strong>blocking</strong> server.</p>
-<p>In Python web terms, “standing motionless” happens whenever your code waits for something outside the CPU. We call this <strong>I/O-bound</strong> work—Input/Output operations like reading a file, querying a database, or calling an external API over the network. While Python waits for the network to respond, the <strong>entire server thread</strong> is stuck. Other requests pile up like angry customers.</p>
+<section id="how-fastapi-handles-many-requests-at-once" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> How FastAPI Handles Many Requests at Once</h1>
+<section id="why-one-slow-call-delays-everyone" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="why-one-slow-call-delays-everyone"><span class="header-section-number">5.1</span> Why One Slow Call Delays Everyone</h2>
+<p>Imagine a restaurant with one waiter handling every table. One table asks for a custom order that takes five minutes to confirm with the kitchen. If the waiter stands there waiting, no other table gets service. That is a <strong>blocking</strong> server (one server worker/thread handling requests sequentially).</p>
+<p>In FastAPI terms, this happens during <strong>I/O-bound</strong> work: waiting on a database, file system, or external API. While that wait is happening, the server thread can’t move on, so other requests queue up.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">sequenceDiagram
-    participant C1 as Customer 1 (Slow Order)
-    participant C2 as Customer 2 (Quick Order)
-    participant S as Sync Server (One Chef)
-    
-    C1-&gt;&gt;S: POST /slow-query (starts)
-    Note over S: Waiting... (blocked for 5s)
-    C2-&gt;&gt;S: GET /health (arrives, but...)
+    participant C1 as Table 1 (Slow Request)
+    participant C2 as Table 2 (Quick Request)
+    participant S as Sync Server (One Waiter)
+
+    C1-&gt;&gt;S: POST /slow-query
+    Note over S: Waiting on external I/O (5s)
+    C2-&gt;&gt;S: GET /health
     Note over C2: Waiting in line...
-    Note over S: Still waiting...
-    S-&gt;&gt;C1: Response (5s later)
-    S-&gt;&gt;C2: Response (served after C1)
+    S-&gt;&gt;C1: Response
+    S-&gt;&gt;C2: Response (after C1)
 </pre>
 </div>
 <p></p></figure><p></p>
 </div>
 </div>
 </div>
-<p>Now imagine you are a brilliant chef. You start the steak, set a timer, take the next order, pour a coffee, check on the steak, and keep moving. That is <strong>async</strong>. You are still one person, but you are never idle while waiting.</p>
+<p>With <strong>async</strong>, the waiter places Table 1’s request, then serves other tables while waiting. Same waiter, better flow.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>“Synchronous” and “Asynchronous” are not the best terms
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In everyday language, “synchronous” describes events that are “in sync”, i.e.&nbsp;they take the same steps together. It DOES NOT tell us if events happen sequentially or simultaneously, although it is often interpreted as “events happening simultaneously”.</p>
+<p>And this is where the confusion arises. In programming, “synchronous” refers to “an event and the code that handles it happen simultaneously”. In other words, the code is “in sync” with the event and cannot handle other events until it finishes. This means that the code can only handle events sequentially, one at a time. So “synchronous” in programming actually means “sequential”, which is the opposite of what the term suggests in everyday language.</p>
+</div>
+</div>
 </section>
-<section id="introducing-async-and-await" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="introducing-async-and-await"><span class="header-section-number">5.2</span> Introducing Async and Await</h2>
-<p>Python uses two keywords to enable this juggling act: <code>async</code> and <code>await</code>.</p>
-<p>When you declare a function with <code>async def</code>, you are telling Python: “This function might pause itself to let others work.” When you write <code>await</code> in front of a slow operation (like an API call), you are saying: “I am stepping aside; let the next customer in line while I wait for this to finish.”</p>
-<p>Here is the simplest possible async endpoint. It does not even call an external service yet—it just pretends to be slow using <code>asyncio.sleep</code>, which is the polite cousin of <code>time.sleep</code> because it yields control instead of hogging it.</p>
+<section id="async-and-await-pause-one-request-serve-another" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="async-and-await-pause-one-request-serve-another"><span class="header-section-number">5.2</span> <code>async</code> and <code>await</code>: Pause One Request, Serve Another</h2>
+<p>Python uses two keywords to juggle multiple requests without blocking: <code>async</code> and <code>await</code>. - When you declare a function with <code>async def</code>, you are telling Python: “This function might pause itself to let others work.” - When you write <code>await</code> in front of a slow operation (like an API call), you are saying: “I am stepping aside; let the next customer in line while I wait for this to finish.”</p>
+<p>Asynchronous operations are handled by an <strong>event loop</strong> (managed by Uvicorn), which keeps track of all the paused functions and wakes them up when their awaited operations complete.</p>
+<p>Here is a simple async endpoint. We will use <code>asyncio.sleep</code> to simulate a slow operation:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -278,109 +282,121 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This simulates a 5-second database query or LLM call</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> asyncio.sleep(<span class="dv">5</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"message"</span>: <span class="st">"Sorry for the wait, here is your data"</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Notice the <code>async</code> on the function definition and the <code>await</code> on the sleep. If you hit this endpoint in a browser, it takes five seconds. But here is the magic: if your friend hits the <code>/health</code> endpoint on the same server during those five seconds, they get an instant response. The server was not blocked. It was waiting for your slow request, yes, but it was waiting <em>politely</em>, allowing the event loop—the invisible manager—to serve others.</p>
-<p>Do not worry about the event loop itself; FastAPI and Uvicorn handle that manager for you. Just remember the rule: if a function touches the network or the filesystem and might take time, make it <code>async def</code> and <code>await</code> the slow parts.</p>
+<p>If you hit this endpoint in a browser, it takes five seconds. If your friend hits the <code>/health</code> endpoint on the same server during those five seconds, they get an instant response. The server was not blocked.</p>
+<p>Just remember the rule: if a function might take time, make it <code>async def</code> and <code>await</code> the slow parts.</p>
 </section>
-<section id="dependency-injection-sharing-the-kitchen-tools" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="dependency-injection-sharing-the-kitchen-tools"><span class="header-section-number">5.3</span> Dependency Injection: Sharing the Kitchen Tools</h2>
-<p>Now for our second challenge. When we start calling real LLM APIs (or databases), we need a client object—like <code>httpx.AsyncClient</code> or the official OpenAI client—to make the HTTP request. Creating this client is slow; it opens network connections and negotiates settings. If you create a brand new client inside every route function, you are essentially sharpening your knife for every single vegetable you chop.</p>
-<p><strong>Dependency Injection</strong> (DI) is the pattern of “injecting” shared resources into your functions rather than building them inside. Think of it as having a sous-chef who hands you the right tool, already prepared, just when you need it.</p>
-<p>FastAPI makes this effortless with the <code>Depends</code> utility. You create a “dependency function” that yields the resource, and FastAPI calls it for you, caching the result for subsequent requests and cleaning up when the server shuts down.</p>
-<p>Here is how you share an async HTTP client safely:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> Depends</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the dependency provider</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_http_client():</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create once, reuse many times</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">with</span> httpx.AsyncClient() <span class="im">as</span> client:</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> client</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Cleanup happens automatically when the server shuts down</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/fetch"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> fetch_data(client: httpx.AsyncClient <span class="op">=</span> Depends(get_http_client)):</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The client is magically provided, already connected</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> <span class="cf">await</span> client.get(<span class="st">"https://api.github.com"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: response.status_code}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The magic is in <code>= Depends(get_http_client)</code>. FastAPI sees this, runs your dependency function, and passes the resulting client as an argument. If ten requests hit this endpoint simultaneously, they all share the same client connection pool efficiently. When you shut down Uvicorn, the <code>async with</code> context manager closes connections gracefully.</p>
-<p>This pattern becomes essential for LLM apps. You will create a dependency that holds your configured OpenAI or Anthropic client, ensuring your API key is loaded once and reused safely across all chat requests.</p>
-</section>
-<section id="keeping-secrets-safe" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="keeping-secrets-safe"><span class="header-section-number">5.4</span> Keeping Secrets Safe</h2>
-<p>Speaking of API keys, we need a brief but serious word about secrets. Hardcoding your LLM key into <code>main.py</code> is like writing your bank PIN on your debit card. Instead, we use environment variables—configuration that lives outside your code—and Pydantic to validate them.</p>
-<p>Install the helper:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Create a settings object that reads from your <code>.env</code> file automatically:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Settings(BaseSettings):</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    openai_api_key: <span class="bu">str</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span> <span class="op">=</span> <span class="st">"gpt-4"</span>  <span class="co"># Default value if not in env</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        env_file <span class="op">=</span> <span class="st">".env"</span></span>
+<section id="dependency-injection-reusing-shared-tools-cleanly" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="dependency-injection-reusing-shared-tools-cleanly"><span class="header-section-number">5.3</span> Dependency Injection: Reusing Shared Tools Cleanly</h2>
+<p>Sometimes, your endpoint may need to call an external service (A database, a tool, etc.), so it needs a “client” to talk to that service (<strong>not to be confused with the “client” that calls your endpoint</strong>). A simple setup might look like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx <span class="co"># for creating HTTP clients</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/fetch"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> fetch_data():</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> httpx.AsyncClient()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> <span class="cf">await</span> client.get(<span class="st">"https://api.some-external-service.com"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> client.aclose()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: response.status_code} <span class="co"># return something</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Notes: - <code>httpx</code> is a popular library for making HTTP requests in Python, and <code>AsyncClient</code> is its asynchronous version. It allows you to create a client object that can make non-blocking HTTP requests. You can use other packages or custom client object. - <code>client.get()</code> sends a GET request to the specified URL. - <code>client.aclose()</code> closes the client object and any open connections.</p>
+<p>Creating a <code>client</code> object involves network setup (it needs to find the server, negotiate encryption, authenticate) and this takes time. If you do this inside the endpoint, every single request will repeat this expensive setup.</p>
+<p>So can we just create the client object outside the endpoint and reuse it? Let’s try:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> httpx.AsyncClient()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/fetch"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> fetch_data():</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> <span class="cf">await</span> client.get(<span class="st">"https://api.some-external-service.com"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: response.status_code}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This approach will work, but it has a problem: you need to keep the client object connected for the entire lifetime of the server since it may be used by multiple requests. This is expensive and can lead to resource leaks. You also need to close the client object manually when the server shuts down.</p>
+<p><strong>Dependency Injection</strong> solves this: you define a function that creates the client object and FastAPI handles the rest. Here’s how it works:</p>
+<p>Instead of creating the client object directly, you define a <em>dependency function</em> that <em>yields</em> the client object (see below), then you declare that your endpoint depends on that function using <code>Depends()</code>. When a request comes in, FastAPI runs the dependency function, gets the client object, and passes it to your endpoint. When the request is done, FastAPI resumes the dependency function to clean up (close connections):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> Depends</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The dependency function</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_http_client():</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">with</span> httpx.AsyncClient() <span class="im">as</span> client:</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> client  <span class="co"># yield: hand client to the endpoint, then pause</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># When the server shuts down, execution resumes here</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> Settings()</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Now use it in your dependency</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_settings():</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Your <code>.env</code> file (never commit this to Git!) looks like:</p>
-<pre><code>OPENAI_API_KEY=sk-...
-MODEL_NAME=gpt-3.5-turbo</code></pre>
-<p>In your routes, access settings via dependency injection: <code>settings: Settings = Depends(get_settings)</code>. This keeps sensitive credentials out of your source code and lets you change models without redeploying.</p>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/fetch"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> fetch_data(client: httpx.AsyncClient <span class="op">=</span> Depends(get_http_client)):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FastAPI sees Depends(), runs get_http_client(), passes the yielded client </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> <span class="cf">await</span> client.get(<span class="st">"https://api.github.com"</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: response.status_code}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Why <code>yield</code> instead of <code>return</code>?</strong> With <code>return</code>, the function ends immediately—no chance to run cleanup later. <code>yield</code> pauses the function, hands over the client, waits for the endpoint to finish, then resumes so the <code>async with ... as</code> block can close connections.</p>
 </section>
-<section id="checkpoint-the-async-quote-server" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="checkpoint-the-async-quote-server"><span class="header-section-number">5.5</span> Checkpoint: The Async Quote Server</h2>
+<section id="keeping-api-keys-safe" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="keeping-api-keys-safe"><span class="header-section-number">5.4</span> Keeping API Keys Safe</h2>
+<p>When you create a client object for an external service, you often need to provide an API key for authentication in addition to the service URL. This is a secret credential that should never be hardcoded in your source code. Instead, we store it in a <code>.env</code> file as an environment variable and use Pydantic to validate them.</p>
+<p>Your <code>.env</code> file (never commit this to Git!) looks like:</p>
+<pre><code>OPENAI_API_KEY=... # If you are using OpenAI, for example
+MODEL_NAME=...</code></pre>
+<p>Install the helper:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Create a settings object that reads from your <code>.env</code> file automatically:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Settings(BaseSettings):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    openai_api_key: <span class="bu">str</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    model_name: <span class="bu">str</span> <span class="op">=</span> <span class="st">"gpt-4"</span>  <span class="co"># Default value if not in env</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        env_file <span class="op">=</span> <span class="st">".env"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> Settings()</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Now use it in your dependency</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_settings():</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You can now access settings via dependency injection: <code>settings: Settings = Depends(get_settings)</code>.</p>
+</section>
+<section id="hands-on-upgrade-the-quote-api-to-async-depends" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="hands-on-upgrade-the-quote-api-to-async-depends"><span class="header-section-number">5.5</span> Hands-On: Upgrade the Quote API to Async + Depends</h2>
 <p>Let us bring it all together by upgrading your Quote of the Day API from Part 2. We will convert it to async, add a fake “slow” quote lookup to prove non-blocking behavior, and inject a shared “database connection” (simulated with a simple class).</p>
 <p>First, the dependency. We will create a fake database handler that takes time to “connect”:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, Depends, HTTPException</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating an expensive-to-create resource</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteDatabase:</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Imagine this opens a real Postgres connection pool</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.quotes <span class="op">=</span> {</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>: {<span class="st">"text"</span>: <span class="st">"Patience is a virtue"</span>, <span class="st">"author"</span>: <span class="st">"Unknown"</span>},</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2</span>: {<span class="st">"text"</span>: <span class="st">"FastAPI is fun"</span>, <span class="st">"author"</span>: <span class="st">"You"</span>}</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="kw">def</span> get_by_id(<span class="va">self</span>, quote_id: <span class="bu">int</span>):</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Simulate network latency to a real database</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">await</span> asyncio.sleep(<span class="dv">2</span>)  </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.quotes:</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="st">"Quote not found"</span>)</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.quotes[quote_id]</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># The dependency provider</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_db():</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> QuoteDatabase()  <span class="co"># In production, you'd cache this properly</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> db</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Cleanup would happen here (close connections)</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastapi <span class="im">import</span> FastAPI, Depends, HTTPException</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastAPI()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating an expensive-to-create resource</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> QuoteDatabase:</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Imagine this opens a real Postgres connection pool</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.quotes <span class="op">=</span> {</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>: {<span class="st">"text"</span>: <span class="st">"Patience is a virtue"</span>, <span class="st">"author"</span>: <span class="st">"Unknown"</span>},</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2</span>: {<span class="st">"text"</span>: <span class="st">"FastAPI is fun"</span>, <span class="st">"author"</span>: <span class="st">"You"</span>}</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="kw">def</span> get_by_id(<span class="va">self</span>, quote_id: <span class="bu">int</span>):</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Simulate network latency to a real database</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">await</span> asyncio.sleep(<span class="dv">2</span>)  </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> quote_id <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.quotes:</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> HTTPException(status_code<span class="op">=</span><span class="dv">404</span>, detail<span class="op">=</span><span class="st">"Quote not found"</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.quotes[quote_id]</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># The dependency provider</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_db():</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> QuoteDatabase()  <span class="co"># In production, you'd cache this properly</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> db</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Cleanup would happen here (close connections)</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now, two endpoints to test concurrency. One is slow (uses the database), one is instant:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>, db: QuoteDatabase <span class="op">=</span> Depends(get_db)):</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This takes 2 seconds due to the simulated latency inside db.get_by_id</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    quote <span class="op">=</span> <span class="cf">await</span> db.get_by_id(quote_id)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quote</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/health"</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> health():</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This responds instantly, even if /quotes/1 is grinding away</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: <span class="st">"ok"</span>, <span class="st">"server"</span>: <span class="st">"async and ready"</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/quotes/</span><span class="sc">{quote_id}</span><span class="st">"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_quote(quote_id: <span class="bu">int</span>, db: QuoteDatabase <span class="op">=</span> Depends(get_db)):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This takes 2 seconds due to the simulated latency inside db.get_by_id</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    quote <span class="op">=</span> <span class="cf">await</span> db.get_by_id(quote_id)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> quote</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">"/health"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> health():</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This responds instantly, even if /quotes/1 is grinding away</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"status"</span>: <span class="st">"ok"</span>, <span class="st">"server"</span>: <span class="st">"async and ready"</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Testing workflow: 1. Start the server: <code>uvicorn main:app --reload</code> 2. In one terminal (or browser tab), request the slow quote: <code>curl http://localhost:8000/quotes/1</code> (This will hang for 2 seconds) 3. <em>Immediately</em>, in a second terminal, hit the health check: <code>curl http://localhost:8000/health</code></p>
-<p>You will see the health check return instantly, while the quote request takes its full two seconds. If you had written this synchronously (using <code>time.sleep</code> instead of <code>await asyncio.sleep</code>), the health check would have waited in line behind the slow quote, taking over two seconds itself. This proves your server is juggling.</p>
-<p>Try it with three or four simultaneous slow requests. They all run concurrently, finishing around the same time, rather than queuing up and taking 2 + 2 + 2 + 2 = 8 seconds total.</p>
+<p>You will see the health check return instantly, while the quote request takes its full two seconds. If you had written this synchronously (using <code>time.sleep</code> instead of <code>await asyncio.sleep</code>), the health check would have waited in line behind the slow quote, taking over two seconds itself.</p>
 </section>
-<section id="part-recap-terms-you-learned" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="part-recap-terms-you-learned"><span class="header-section-number">5.6</span> Part Recap: Terms You Learned</h2>
-<p>You have crossed the bridge from simple scripts to concurrent, production-ready services. Here is the vocabulary that unlocks this new power:</p>
+<section id="recap-terms-you-learned" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="recap-terms-you-learned"><span class="header-section-number">5.6</span> Recap: Terms You Learned</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -413,13 +429,8 @@ MODEL_NAME=gpt-3.5-turbo</code></pre>
 <td><strong>Dependency Injection</strong></td>
 <td>The pattern of providing pre-built tools (like database clients) to your functions via <code>Depends()</code></td>
 </tr>
-<tr class="even">
-<td><strong>Yield (in dependencies)</strong></td>
-<td>The way a dependency provides a resource to the route, then waits to clean up after the request finishes</td>
-</tr>
 </tbody>
 </table>
-<p>You are now ready for the final stretch. In the next section, we will replace that fake two-second database delay with a real call to an LLM API. We will stream the response word-by-word back to the browser, and you will see exactly why all this async preparation was worth the effort.</p>
 
 
 </section>
@@ -828,14 +839,11 @@ MODEL_NAME=gpt-3.5-turbo</code></pre>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./part-02.html" class="pagination-link" aria-label="Building Real Endpoints">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Building Real Endpoints</span></span>
+      <a href="./part-02.html" class="pagination-link" aria-label="From URL Paths to Python Parameters">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">From URL Paths to Python Parameters</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./part-04.html" class="pagination-link" aria-label="Building the LLM Chat Application">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Building the LLM Chat Application</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
